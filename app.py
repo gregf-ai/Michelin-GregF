@@ -43,7 +43,7 @@ ARTICLE_CSS = """
 
 [data-testid="block-container"] {
     max-width: 1560px;
-    padding-top: 2.5rem;
+    padding-top: 0.85rem;
     padding-bottom: 4rem;
 }
 
@@ -301,10 +301,10 @@ button[data-baseweb="tab"][aria-selected="true"] {
 .hero-banner {
     position: relative;
     width: calc(100% + 5rem);
-    min-height: 340px;
+    min-height: 375px;
     background-size: cover;
     background-position: center 35%;
-    margin: -2.25rem -2.5rem 2rem -2.5rem;
+    margin: -0.85rem -2.5rem 2rem -2.5rem;
     overflow: hidden;
 }
 
@@ -1090,9 +1090,12 @@ def render_chatbot() -> None:
                 "Why has Sumitomo's stock price grown so rapidly?",
                 "Why does Michelin maintain margins higher than their competitors?",
             ]
+            st.caption("Starter prompts")
+            prompt_cols = st.columns(2, gap="small")
             for idx, suggestion in enumerate(suggestions):
-                if st.button(suggestion, key=f"single_page_suggestion_{idx}", width="stretch"):
-                    st.session_state.pending_question = suggestion
+                with prompt_cols[idx % 2]:
+                    if st.button(suggestion, key=f"single_page_suggestion_{idx}", width="stretch"):
+                        st.session_state.pending_question = suggestion
 
         # ── Fixed-height scrollable message area ──
         has_history = bool(st.session_state.chat_history)

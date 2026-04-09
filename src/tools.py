@@ -78,6 +78,15 @@ def _safe_pct(val) -> str:
         return "N/A"
 
 
+def _safe_float(val) -> float | None:
+    try:
+        if val is None or pd.isna(val):
+            return None
+        return float(val)
+    except (TypeError, ValueError):
+        return None
+
+
 def _apply_year_window(df: pd.DataFrame, years: int) -> pd.DataFrame:
     """Apply a rolling year window. years<=0 keeps full history."""
     if years <= 0 or "fiscal_year" not in df.columns or df.empty:
@@ -346,9 +355,11 @@ def get_stock_performance(company: str = "all", period_days: int = 252) -> str:
         latest = cdf.iloc[0]
         earliest = cdf.iloc[-1]
 
-        price_now = latest["adj_close"]
-        price_then = earliest["adj_close"]
-        if price_then and price_then > 0:
+        price_now = _safe_float(latest["adj_close"])
+        price_then = _safe_float(earliest["adj_close"])
+        if price_now is None or price_then is None:
+            continue
+        if price_then > 0:
             change_pct = ((price_now - price_then) / price_then) * 100
         else:
             change_pct = 0
