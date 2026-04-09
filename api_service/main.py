@@ -149,6 +149,22 @@ def health() -> dict:
     }
 
 
+@app.get("/")
+def root() -> dict:
+    return {
+        "service": "wheel-street-analyst-api",
+        "status": "ok",
+        "health": "/health",
+        "endpoints": [
+            "/data/coverage",
+            "/query/financial-sql",
+            "/search/transcripts",
+            "/search/patents",
+            "/qa",
+        ],
+    }
+
+
 @app.get("/data/coverage", response_model=GenericTextResponse)
 def data_coverage() -> GenericTextResponse:
     return GenericTextResponse(result=get_data_coverage.invoke({}))
