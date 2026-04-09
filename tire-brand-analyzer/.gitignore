@@ -7,3 +7,6 @@ venv/
 dist/
 build/
 data/raw/uspto_odp/
+data/archive/
+data/processed/*.log
+data/processed/*.err.log

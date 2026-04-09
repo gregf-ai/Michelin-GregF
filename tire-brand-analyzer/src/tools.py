@@ -20,7 +20,7 @@ from src.data_loader import (
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DUCKDB_PATH = PROJECT_ROOT / "data" / "processed" / "financial_analyst.duckdb"
+DUCKDB_PATH = PROJECT_ROOT / "data" / "processed" / "curated" / "financial_analyst.duckdb"
 MAX_SQL_ROWS = 200
 
 ALLOWED_TABLES = {
@@ -406,8 +406,8 @@ def get_data_coverage() -> str:
     """Return row counts and date/year coverage for core financial and text datasets."""
     if not DUCKDB_PATH.exists():
         return (
-            "DuckDB database not found at data/processed/financial_analyst.duckdb. "
-            "Run data/process_to_duckdb.py first."
+            "DuckDB database not found at data/processed/curated/financial_analyst.duckdb. "
+            "Run data/load/process_to_duckdb.py first."
         )
 
     conn = duckdb.connect(str(DUCKDB_PATH), read_only=True)
@@ -462,7 +462,7 @@ def query_financial_database(sql_query: str) -> str:
         return f"Unknown or disallowed table(s): {', '.join(sorted(unknown_tables))}"
 
     if not DUCKDB_PATH.exists():
-        return "DuckDB database not found at data/processed/financial_analyst.duckdb."
+        return "DuckDB database not found at data/processed/curated/financial_analyst.duckdb."
 
     wrapped = f"SELECT * FROM ({query}) AS q LIMIT {MAX_SQL_ROWS}"
     conn = duckdb.connect(str(DUCKDB_PATH), read_only=True)

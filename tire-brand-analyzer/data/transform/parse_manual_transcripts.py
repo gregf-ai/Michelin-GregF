@@ -9,8 +9,9 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-MANUAL_DIR = Path(__file__).parent / "raw/transcripts/manual"
-RAW_TRANSCRIPTS_DIR = Path(__file__).parent / "raw/transcripts"
+DATA_ROOT = Path(__file__).resolve().parents[1]
+MANUAL_DIR = DATA_ROOT / "raw" / "transcripts" / "manual"
+RAW_TRANSCRIPTS_DIR = DATA_ROOT / "raw" / "transcripts"
 MANUAL_FILENAME_RE = re.compile(r"^(?P<ticker>[a-z0-9]+)_q(?P<quarter>[1-4])_(?P<year>\d{4})\.txt$", re.IGNORECASE)
 HEADER_DATE_RE = re.compile(r"([A-Z][a-z]+\s+\d{1,2},\s+\d{4}\s+\d{1,2}:\d{2}\s+[AP]M)\s+(?:ET|EST|EDT)")
 

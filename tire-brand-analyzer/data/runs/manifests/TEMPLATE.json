@@ -1,0 +1,18 @@
+{
+  "run_id": "replace-with-uuid-or-timestamp-id",
+  "pipeline": "replace-with-pipeline-name",
+  "stage": "extract",
+  "started_at_utc": "2026-04-09T00:00:00Z",
+  "finished_at_utc": "2026-04-09T00:10:00Z",
+  "status": "success",
+  "inputs": [
+    "data/raw/..."
+  ],
+  "outputs": [
+    "data/processed/..."
+  ],
+  "row_counts": {
+    "example_table": 0
+  },
+  "notes": ""
+}

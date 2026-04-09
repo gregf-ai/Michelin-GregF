@@ -1,0 +1,7 @@
+ticker,company,total_patents,ai_candidates,analyzed_patents,ai_patents,ml_patents,genai_patents,computer_vision_patents,nlp_patents,optimization_ai_patents,autonomy_robotics_patents,ai_patent_share
+MGDDY,Michelin,2935,34,34,8,8,0,0,0,0,0,0.002726
+GT,Goodyear,2279,78,90,18,16,0,0,0,0,0,0.007898
+BRDCY,Bridgestone,5181,88,88,32,30,0,0,0,0,0,0.006176
+CTTAY,Continental,4028,467,204,82,65,4,3,0,3,0,0.020357
+PLLIF,Pirelli,513,2,2,1,1,0,0,0,0,0,0.001949
+SSUMY,Sumitomo,3528,146,95,17,15,0,0,1,1,0,0.004819

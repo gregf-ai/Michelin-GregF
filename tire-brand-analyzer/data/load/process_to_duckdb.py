@@ -6,8 +6,8 @@ Scope (simplified):
 - Raw JSON: profiles, news, transcripts
 
 Usage:
-  c:/Michelin-GregF/.venv/Scripts/python.exe data/process_to_duckdb.py
-  c:/Michelin-GregF/.venv/Scripts/python.exe data/process_to_duckdb.py --db-path data/processed/financial_analyst.duckdb
+    c:/Michelin-GregF/.venv/Scripts/python.exe data/load/process_to_duckdb.py
+    c:/Michelin-GregF/.venv/Scripts/python.exe data/load/process_to_duckdb.py --db-path data/processed/curated/financial_analyst.duckdb
 """
 
 from __future__ import annotations
@@ -20,9 +20,12 @@ from typing import Any
 import duckdb
 import pandas as pd
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-RAW_DIR = PROJECT_ROOT / "data" / "raw"
-PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_ROOT = Path(__file__).resolve().parents[1]
+RAW_DIR = DATA_ROOT / "raw"
+PROCESSED_DIR = DATA_ROOT / "processed"
+CURATED_DIR = PROCESSED_DIR / "curated"
+ANALYTICS_DIR = PROCESSED_DIR / "analytics"
 
 TICKER_TO_COMPANY = {
     "MGDDY": "Michelin",
@@ -50,8 +53,7 @@ def _create_or_replace_table(conn: duckdb.DuckDBPyConnection, name: str, df: pd.
     return len(df)
 
 
-def _load_processed_csv(name: str, parse_dates: list[str] | None = None) -> pd.DataFrame:
-    path = PROCESSED_DIR / name
+def _load_csv(path: Path, parse_dates: list[str] | None = None) -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame()
     return pd.read_csv(path, parse_dates=parse_dates or [])
@@ -241,22 +243,22 @@ def build_duckdb(db_path: Path) -> None:
     table_counts["income_statements"] = _create_or_replace_table(
         conn,
         "income_statements",
-        _load_processed_csv("income_statements_usd.csv", parse_dates=["date"]),
+        _load_csv(CURATED_DIR / "income_statements_usd.csv", parse_dates=["date"]),
     )
     table_counts["cash_flows"] = _create_or_replace_table(
         conn,
         "cash_flows",
-        _load_processed_csv("cash_flows_usd.csv", parse_dates=["date"]),
+        _load_csv(CURATED_DIR / "cash_flows_usd.csv", parse_dates=["date"]),
     )
     table_counts["ratios"] = _create_or_replace_table(
         conn,
         "ratios",
-        _load_processed_csv("ratios.csv", parse_dates=["date"]),
+        _load_csv(CURATED_DIR / "ratios.csv", parse_dates=["date"]),
     )
     table_counts["stock_prices"] = _create_or_replace_table(
         conn,
         "stock_prices",
-        _load_processed_csv("stock_prices.csv", parse_dates=["date"]),
+        _load_csv(CURATED_DIR / "stock_prices.csv", parse_dates=["date"]),
     )
 
     # Raw text datasets.
@@ -267,17 +269,17 @@ def build_duckdb(db_path: Path) -> None:
     table_counts["news_summaries"] = _create_or_replace_table(
         conn,
         "news_summaries",
-        _load_processed_csv("news_summaries_ollama.csv", parse_dates=["date_start", "date_end"]),
+        _load_csv(ANALYTICS_DIR / "news_summaries_ollama.csv", parse_dates=["date_start", "date_end"]),
     )
     table_counts["transcript_summaries"] = _create_or_replace_table(
         conn,
         "transcript_summaries",
-        _load_processed_csv("transcript_summaries_ollama.csv", parse_dates=["date"]),
+        _load_csv(ANALYTICS_DIR / "transcript_summaries_ollama.csv", parse_dates=["date"]),
     )
     table_counts["transcript_company_summaries"] = _create_or_replace_table(
         conn,
         "transcript_company_summaries",
-        _load_processed_csv("transcript_company_summaries_ollama.csv"),
+        _load_csv(ANALYTICS_DIR / "transcript_company_summaries_ollama.csv"),
     )
 
     # Helpful indexes for common filters.
@@ -299,7 +301,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build DuckDB from processed and raw datasets")
     parser.add_argument(
         "--db-path",
-        default=str(PROCESSED_DIR / "financial_analyst.duckdb"),
+        default=str(CURATED_DIR / "financial_analyst.duckdb"),
         help="Path to output DuckDB file",
     )
     parser.add_argument(

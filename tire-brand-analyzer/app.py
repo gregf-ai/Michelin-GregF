@@ -213,7 +213,7 @@ button[data-baseweb="tab"][aria-selected="true"] {
 
 GRAYSCALE = ["#111111", "#555555", "#8c8c8c", "#b4b4b4", "#d0d0d0", "#e5e5e5"]
 PEER_ORDER = [COMPANY_NAMES[t] for t in COMPANY_NAMES]
-PROCESSED_DIR = Path(__file__).resolve().parent / "data" / "processed"
+CURATED_DIR = Path(__file__).resolve().parent / "data" / "processed" / "curated"
 ENV_FILE_PATH = Path(__file__).resolve().parent / ".env"
 
 
@@ -232,9 +232,9 @@ def get_latest_metric_year(df: pd.DataFrame, metric: str) -> int | None:
 
 @st.cache_data
 def prepare_competitive_frames() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, int]:
-    income = pd.read_csv(PROCESSED_DIR / "income_statements_usd.csv")
-    stock_prices = pd.read_csv(PROCESSED_DIR / "stock_prices.csv")
-    cash_flows = pd.read_csv(PROCESSED_DIR / "cash_flows_usd.csv")
+    income = pd.read_csv(CURATED_DIR / "income_statements_usd.csv")
+    stock_prices = pd.read_csv(CURATED_DIR / "stock_prices.csv")
+    cash_flows = pd.read_csv(CURATED_DIR / "cash_flows_usd.csv")
 
     income["fiscal_year"] = pd.to_numeric(income["fiscal_year"], errors="coerce")
     income = income.dropna(subset=["fiscal_year"]).sort_values(["company", "fiscal_year"])

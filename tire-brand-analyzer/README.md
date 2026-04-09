@@ -114,16 +114,16 @@ If you want to refresh the financial data:
 
 ```bash
 set ROIC_API_KEY=your-roic-key-here
-python data/download.py
+python data/extract/download.py
 ```
 
 ### Option 4: Build DuckDB analytics store (optional)
 
 ```bash
-python data/process_to_duckdb.py
+python data/load/process_to_duckdb.py
 ```
 
-This creates `data/processed/financial_analyst.duckdb` with processed financial tables,
+This creates `data/processed/curated/financial_analyst.duckdb` with processed financial tables,
 raw text tables (news/transcripts), company profiles, and summary tables.
 
 ## Deployment (Render)

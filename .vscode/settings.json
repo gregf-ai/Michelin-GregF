@@ -1,0 +1,11 @@
+{
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 100,
+            "driver": "DuckDB",
+            "database": "${workspaceFolder:Michelin-GregF}/tire-brand-analyzer/data/processed/financial_analyst.duckdb",
+            "name": "finanicials"
+        }
+    ]
+}

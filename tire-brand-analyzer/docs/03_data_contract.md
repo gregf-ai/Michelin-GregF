@@ -38,11 +38,11 @@ MGDDY, GT, BRDCY, CTTAY, PLLIF, SSUMY
 - News volume differs materially by company.
 
 ## Data Freshness
-- Snapshot-based; refreshed by running data/download.py.
+- Snapshot-based; refreshed by running data/extract/download.py.
 
 ## Local Analytics Store (DuckDB)
-- Build command: `python data/process_to_duckdb.py`
-- Output file: `data/processed/financial_analyst.duckdb`
+- Build command: `python data/load/process_to_duckdb.py`
+- Output file: `data/processed/curated/financial_analyst.duckdb`
 - Full rebuild behavior: each run recreates the DuckDB file.
 - Included tables:
   - Processed financials: `income_statements`, `cash_flows`, `ratios`, `stock_prices`

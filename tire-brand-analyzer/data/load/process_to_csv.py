@@ -7,7 +7,8 @@ for income statements and cash flows.
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DATA_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -20,7 +21,7 @@ from src.data_loader import (
 
 
 def main() -> None:
-    output_dir = Path(__file__).resolve().parent / "processed"
+    output_dir = DATA_ROOT / "processed" / "curated"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     datasets = {

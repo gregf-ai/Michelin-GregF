@@ -11,8 +11,8 @@ Outputs are written under data/raw/uspto_odp/<TICKER>/:
 - filings_with_text.jsonl     filing + abstract + claims + description text
 
 Usage:
-  python data/download_uspto_odp_filings.py
-  python data/download_uspto_odp_filings.py --max-records-per-company 5
+    python data/extract/download_uspto_odp_filings.py
+    python data/extract/download_uspto_odp_filings.py --max-records-per-company 5
 """
 
 from __future__ import annotations
@@ -29,9 +29,9 @@ from urllib.parse import urlparse
 import requests
 
 API_BASE = "https://api.uspto.gov/api/v1"
-ROOT = Path(__file__).resolve().parent
-RAW_OUT = ROOT / "raw" / "uspto_odp"
-ENV_FILE = ROOT.parent / ".env"
+DATA_ROOT = Path(__file__).resolve().parents[1]
+RAW_OUT = DATA_ROOT / "raw" / "uspto_odp"
+ENV_FILE = DATA_ROOT.parent / ".env"
 
 COMPANY_QUERIES = {
     "MGDDY": "(applicationMetaData.firstApplicantName:Michelin* OR applicationMetaData.firstApplicantName:Compagnie*Michelin*)",
@@ -146,6 +146,11 @@ def main() -> None:
     parser.add_argument("--page-size", type=int, default=100, help="ODP page size")
     parser.add_argument("--max-records-per-company", type=int, default=0, help="0 means all")
     parser.add_argument("--sleep", type=float, default=0.1, help="Delay between API calls")
+    parser.add_argument(
+        "--tickers",
+        default="",
+        help="Comma-separated subset of tickers to process (e.g., CTTAY,PLLIF,SSUMY). Default: all",
+    )
     args = parser.parse_args()
 
     key = read_odp_key()
@@ -155,7 +160,19 @@ def main() -> None:
     session = requests.Session()
     session.headers.update({"X-API-KEY": key})
 
-    for ticker, query_core in COMPANY_QUERIES.items():
+    selected_tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    if selected_tickers:
+        unknown_tickers = [t for t in selected_tickers if t not in COMPANY_QUERIES]
+        if unknown_tickers:
+            raise ValueError(
+                f"Unknown ticker(s): {', '.join(unknown_tickers)}. "
+                f"Supported: {', '.join(COMPANY_QUERIES.keys())}"
+            )
+        company_items = [(ticker, COMPANY_QUERIES[ticker]) for ticker in selected_tickers]
+    else:
+        company_items = list(COMPANY_QUERIES.items())
+
+    for ticker, query_core in company_items:
         out_dir = RAW_OUT / ticker
         docs_dir = out_dir / "documents"
         out_dir.mkdir(parents=True, exist_ok=True)

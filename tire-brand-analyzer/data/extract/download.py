@@ -1,12 +1,13 @@
 """
 One-time script to download financial data from roic.ai API.
-Run locally: python data/download.py
+Run locally: python data/extract/download.py
 Data is saved as JSON and committed to the repo for offline use.
 """
 
 import json
 import os
 import time
+import argparse
 from datetime import datetime, timezone
 import requests
 
@@ -31,7 +32,7 @@ LOOKBACK_YEARS = 10
 NEWS_PAGE_SIZE = 50
 NEWS_MAX_PAGES = 100
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "raw")
+DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "raw"))
 
 
 def _fetch_json(session, url, params):
@@ -169,11 +170,13 @@ def download_transcripts(session, ticker):
         print(f"ERROR: {e}")
 
 
-def download_all():
+def download_all(tickers=None):
     session = requests.Session()
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    for ticker in TICKERS:
+    run_tickers = tickers or TICKERS
+
+    for ticker in run_tickers:
         print(f"\n{'='*50}")
         print(f"Downloading data for {ticker}")
         print(f"{'='*50}")
@@ -185,5 +188,27 @@ def download_all():
     print(f"\nDone! Data saved to {DATA_DIR}")
 
 
+def _parse_args():
+    parser = argparse.ArgumentParser(
+        description="Download raw financial/news/transcript data from roic.ai"
+    )
+    parser.add_argument(
+        "--tickers",
+        default="",
+        help="Comma-separated subset of tickers to process (default: all configured)",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    download_all()
+    args = _parse_args()
+    selected_tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    if selected_tickers:
+        unknown = [t for t in selected_tickers if t not in TICKERS]
+        if unknown:
+            raise ValueError(
+                f"Unknown ticker(s): {', '.join(unknown)}. Supported: {', '.join(TICKERS)}"
+            )
+        download_all(selected_tickers)
+    else:
+        download_all()

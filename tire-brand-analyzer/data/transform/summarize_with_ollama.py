@@ -1,8 +1,8 @@
-"""Summarize news and earnings transcripts with Ollama and save to data/processed.
+"""Summarize news and earnings transcripts with Ollama and save to data/processed/analytics.
 
 Usage examples:
-  c:/Michelin-GregF/.venv/Scripts/python.exe data/summarize_with_ollama.py
-  c:/Michelin-GregF/.venv/Scripts/python.exe data/summarize_with_ollama.py --model qwen2.5:14b-instruct-q4_K_M
+    c:/Michelin-GregF/.venv/Scripts/python.exe data/transform/summarize_with_ollama.py
+    c:/Michelin-GregF/.venv/Scripts/python.exe data/transform/summarize_with_ollama.py --model qwen2.5:14b-instruct-q4_K_M
 """
 
 from __future__ import annotations
@@ -16,8 +16,9 @@ from typing import Any
 import pandas as pd
 import requests
 
-RAW_DIR = Path(__file__).resolve().parent / "raw"
-OUT_DIR = Path(__file__).resolve().parent / "processed"
+DATA_ROOT = Path(__file__).resolve().parents[1]
+RAW_DIR = DATA_ROOT / "raw"
+OUT_DIR = DATA_ROOT / "processed" / "analytics"
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
 TICKER_TO_COMPANY = {
