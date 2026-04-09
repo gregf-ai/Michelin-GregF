@@ -19,7 +19,4 @@ services:
       - key: OPENAI_API_KEY
         sync: false
       - key: ANALYST_API_BASE_URL
-        fromService:
-          type: web
-          name: wheel-street-api
-          property: host
+        value: https://wheel-street-api.onrender.com

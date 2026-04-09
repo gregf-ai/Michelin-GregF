@@ -1393,6 +1393,10 @@ def _normalize_api_base_url(raw_url: str) -> str:
         return ""
     if cleaned.startswith("http://") or cleaned.startswith("https://"):
         return cleaned
+    # Render blueprints may inject a bare service host like "wheel-street-api".
+    # Convert that to a publicly resolvable domain for browser-facing requests.
+    if "." not in cleaned and cleaned != "localhost":
+        return f"https://{cleaned}.onrender.com"
     return f"https://{cleaned}"
 
 
