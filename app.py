@@ -1,3 +1,4 @@
+import base64
 import os
 import traceback
 from pathlib import Path
@@ -64,7 +65,8 @@ h1, h2, h3, h4 {
 }
 
 .eyebrow {
-    font-size: 0.78rem;
+    font-size: 0.98rem;
+    font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--muted);
@@ -195,6 +197,32 @@ button[data-baseweb="tab"][aria-selected="true"] {
     border-color: #111111;
 }
 
+.hero-banner {
+    position: relative;
+    width: calc(100% + 5rem);
+    min-height: 340px;
+    background-size: cover;
+    background-position: center 35%;
+    margin: -2.25rem -2.5rem 2rem -2.5rem;
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 55%, rgba(0,0,0,0.18) 100%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 3.5rem 2.5rem 2.75rem;
+}
+
+.hero-content .eyebrow { color: rgba(255,255,255,0.62); }
+.hero-content .hero-title { color: #ffffff; }
+.hero-content .hero-deck { color: rgba(255,255,255,0.82); }
+
 @media (max-width: 900px) {
     .article-shell {
         padding: 1.4rem 1rem 2rem;
@@ -207,6 +235,12 @@ button[data-baseweb="tab"][aria-selected="true"] {
     .sticky-chat {
         position: static;
     }
+
+    .hero-banner {
+        width: calc(100% + 2rem);
+        margin-left: -1rem;
+        margin-right: -1rem;
+    }
 }
 </style>
 """
@@ -215,6 +249,14 @@ GRAYSCALE = ["#111111", "#555555", "#8c8c8c", "#b4b4b4", "#d0d0d0", "#e5e5e5"]
 PEER_ORDER = [COMPANY_NAMES[t] for t in COMPANY_NAMES]
 CURATED_DIR = Path(__file__).resolve().parent / "data" / "processed" / "curated"
 ENV_FILE_PATH = Path(__file__).resolve().parent / ".env"
+HERO_IMG_PATH = Path(__file__).resolve().parent / "static" / "bull.jpg"
+
+
+def get_hero_bg_css() -> str:
+    if HERO_IMG_PATH.exists():
+        b64 = base64.b64encode(HERO_IMG_PATH.read_bytes()).decode()
+        return f"<style>.hero-banner {{ background-image: url('data:image/jpeg;base64,{b64}'); }}</style>"
+    return ""
 
 
 def format_pct(value: float | None) -> str:
@@ -552,11 +594,17 @@ michelin_rank = margin_rank.index[margin_rank["company"] == "Michelin"]
 michelin_rank_text = f"#{int(michelin_rank[0]) + 1}" if len(michelin_rank) else "N/A"
 
 st.markdown(ARTICLE_CSS, unsafe_allow_html=True)
+st.markdown(get_hero_bg_css(), unsafe_allow_html=True)
 st.markdown("<div class='article-shell'>", unsafe_allow_html=True)
-st.markdown("<div class='eyebrow'>Michelin Peer Analysis</div>", unsafe_allow_html=True)
-st.markdown("<h1 class='hero-title'>How competitive is Michelin compared to peers?</h1>", unsafe_allow_html=True)
 st.markdown(
-    f"<div class='hero-deck'>This page is structured like a research note rather than a dashboard. The first section isolates Michelin’s operating competitiveness against the same six-company tire peer set already loaded in the app. The visual treatment is intentionally stripped back: black, gray, white, minimal scaffolding, and only the comparisons that matter.</div>",
+    "<div class='hero-banner'>"
+    "<div class='hero-overlay'></div>"
+    "<div class='hero-content'>"
+    "<div class='eyebrow'>Wheel Street</div>"
+    "<h1 class='hero-title'>Which tire company has the strongest competitive moat?</h1>"
+    "<div class='hero-deck'>Goal: quantify competitive edge with evidence from income statement strength, stock performance, and patent portfolio depth across the same global peer set.</div>"
+    "</div>"
+    "</div>",
     unsafe_allow_html=True,
 )
 st.markdown(
@@ -568,7 +616,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.markdown("<h2 class='section-title'>How competitive is Michelin compared to peers?</h2>", unsafe_allow_html=True)
+st.markdown("<h2 class='section-title'>Which tire company has the strongest competitive moat?</h2>", unsafe_allow_html=True)
 st.markdown(
     "<div class='section-deck'>The left side provides the financial figures and visual evidence. The right side keeps a financial analyst agent available in-line for follow-up questions, so analysis happens directly beside the charts.</div>",
     unsafe_allow_html=True,
