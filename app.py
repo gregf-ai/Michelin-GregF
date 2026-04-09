@@ -1028,7 +1028,7 @@ st.markdown(
 
 left_col, right_col = st.columns([1.55, 0.95], gap="large")
 with left_col:
-    tabs = st.tabs(["Overview", "ROIC", "EBITDA Margin", "Revenue Growth", "EBITDA Growth", "Annual Stock Growth", "Dividend Growth"])
+    tabs = st.tabs(["Overview", "EBITDA Margin", "ROIC", "Dividend Growth", "Annual Stock Growth", "Revenue Growth", "EBITDA Growth"])
     with tabs[0]:
         render_overview_rankings(
             [
@@ -1072,45 +1072,45 @@ with left_col:
         )
     with tabs[1]:
         render_metric_tab(
-            "ROIC",
-            "Return on invested capital (ROIC) ranking on the left, followed by the top two peers and Michelin over time.",
-            ratios_data,
-            "return_on_inv_capital",
-        )
-    with tabs[2]:
-        render_metric_tab(
             "EBITDA Margin",
             "EBITDA margin ranking on the left, followed by the top two peers and Michelin over time.",
             margin_data,
             "ebitda_margin",
         )
+    with tabs[2]:
+        render_metric_tab(
+            "ROIC",
+            "Return on invested capital (ROIC) ranking on the left, followed by the top two peers and Michelin over time.",
+            ratios_data,
+            "return_on_inv_capital",
+        )
     with tabs[3]:
         render_metric_tab(
-            "Revenue Growth",
-            "Year-over-year revenue growth based on sales revenue turnover.",
-            income,
-            "revenue_growth",
+            "Dividend Growth",
+            "Year-over-year growth in dividends paid based on cf_dvd_paid (absolute cash outflow).",
+            dividend_growth_data,
+            "dividend_growth",
         )
     with tabs[4]:
-        render_metric_tab(
-            "EBITDA Growth",
-            "Year-over-year EBITDA growth based on annual EBITDA values.",
-            income,
-            "ebitda_growth",
-        )
-    with tabs[5]:
         render_metric_tab(
             "Annual Stock Growth",
             "Year-over-year stock price growth based on split-adjusted year-end close.",
             stock_growth_data,
             "annual_stock_growth",
         )
+    with tabs[5]:
+        render_metric_tab(
+            "Revenue Growth",
+            "Year-over-year revenue growth based on sales revenue turnover.",
+            income,
+            "revenue_growth",
+        )
     with tabs[6]:
         render_metric_tab(
-            "Dividend Growth",
-            "Year-over-year growth in dividends paid based on cf_dvd_paid (absolute cash outflow).",
-            dividend_growth_data,
-            "dividend_growth",
+            "EBITDA Growth",
+            "Year-over-year EBITDA growth based on annual EBITDA values.",
+            income,
+            "ebitda_growth",
         )
 with right_col:
     st.markdown("<div class='chat-panel'>", unsafe_allow_html=True)
