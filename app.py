@@ -63,7 +63,7 @@ h1, h2, h3, h4 {
     background: rgba(255,255,255,0.88);
     border: 1px solid rgba(17,17,17,0.08);
     box-shadow: 0 18px 50px rgba(17,17,17,0.06);
-    padding: 2.25rem 2.5rem 2.75rem;
+    padding: 0 2.5rem 2.75rem;
 }
 
 .eyebrow {
@@ -383,7 +383,7 @@ def get_latest_metric_year(df: pd.DataFrame, metric: str) -> int | None:
 
 
 @st.cache_data
-def prepare_competitive_frames() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, int]:
+def prepare_competitive_frames() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, int]:
     income = pd.read_csv(CURATED_DIR / "income_statements_usd.csv")
     stock_prices = pd.read_csv(CURATED_DIR / "stock_prices.csv")
     cash_flows = pd.read_csv(CURATED_DIR / "cash_flows_usd.csv")
@@ -409,12 +409,18 @@ def prepare_competitive_frames() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFra
     # Dividends paid are commonly negative cash outflows, so use absolute values for intuitive growth.
     cash_flows["dividend_paid_abs"] = cash_flows["cf_dvd_paid"].abs()
     cash_flows["dividend_growth"] = cash_flows.groupby("company")["dividend_paid_abs"].pct_change() * 100
+    # Remove known outlier that distorts peer comparison.
+    cash_flows.loc[
+        (cash_flows["fiscal_year"] == 2012)
+        & (cash_flows["company"].astype(str).str.contains("Continental", case=False, na=False)),
+        "dividend_growth",
+    ] = pd.NA
 
     ratios["fiscal_year"] = pd.to_numeric(ratios["fiscal_year"], errors="coerce")
     ratios = ratios.dropna(subset=["fiscal_year", "return_on_inv_capital", "company"]).sort_values(["company", "fiscal_year"])
 
     latest_year = int(margin["fiscal_year"].max()) if not margin.empty else 0
-    return income, margin, year_end_prices, cash_flows, ratios, latest_year
+    return income, margin, year_end_prices, cash_flows, ratios, stock_prices, latest_year
 
 
 def latest_metric_frame(df: pd.DataFrame, metric: str) -> pd.DataFrame:
@@ -640,17 +646,18 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
             shading_color_below = "rgba(160,160,160,0.2)"  # gray
             center_label = format_pct(center_val)
         
-        # Optimize y-axis range for better chart height
+        # Use tighter padding so lines occupy more of the available vertical space.
         value_range = max(y_vals) - min(y_vals)
-        y_spread = max(value_range * 0.6, abs(max(y_vals) - center_val), abs(min(y_vals) - center_val)) * 1.3
+        y_spread = max(value_range * 0.55, abs(max(y_vals) - center_val), abs(min(y_vals) - center_val), 0.25) * 1.06
 
         # Add area shading between data and center line
         fig.add_trace(go.Scatter(
             x=x_vals + x_vals[::-1],
             y=[max(v, center_val) for v in y_vals] + [center_val] * len(y_vals),
+            mode="lines",
             fill="toself",
             fillcolor=shading_color_above,
-            line_width=0,
+            line=dict(width=0, color="rgba(0,0,0,0)"),
             showlegend=False,
             hoverinfo="skip",
         ), row=row, col=1)
@@ -658,9 +665,10 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
         fig.add_trace(go.Scatter(
             x=x_vals + x_vals[::-1],
             y=[min(v, center_val) for v in y_vals] + [center_val] * len(y_vals),
+            mode="lines",
             fill="toself",
             fillcolor=shading_color_below,
-            line_width=0,
+            line=dict(width=0, color="rgba(0,0,0,0)"),
             showlegend=False,
             hoverinfo="skip",
         ), row=row, col=1)
@@ -696,30 +704,31 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
                 xref=f"x{row if row > 1 else ''}", yref=yaxis_refs[i],
                 x=x, y=y,
                 text=f"{y:.0f}%",
-                showarrow=False, yshift=8,
-                font=dict(size=9, color="#666666"),
+                showarrow=False, yshift=8 if y >= center_val else -10,
+                font=dict(size=11, color="#666666"),
             )
 
-        # Company name and final value annotation on right
-        val_series = cdf[cdf["fiscal_year"] == 2025][metric]
-        val_str = format_pct(val_series.iloc[0]) if not val_series.empty else format_pct(y_vals[-1])
+        # Company name and median annotation on right
+        val_str = format_pct(float(cdf[metric].median()))
         fig.add_annotation(
             xref="paper", yref=yaxis_refs[i],
             x=1.02, y=y_vals[-1],
-            text=f"<b>{company}</b><br>{val_str}",
+            text=f"<b>{company}</b><br>Median: {val_str}",
             showarrow=False, xanchor="left", yanchor="middle",
             font=dict(size=14, color="#111111"),
         )
         
         # Label with leader line for center value on left
         if is_growth_metric:
-            # For 0 line, just add leader line
+            # For 0 line, show subtle label and leader line
             fig.add_annotation(
                 xref="paper", yref=yaxis_refs[i],
                 x=-0.19, y=center_val,
                 ax=-30, ay=0,
                 showarrow=True, arrowhead=2, arrowsize=0.8, arrowwidth=0.5, arrowcolor="#999999",
-                text="",
+                text="0%",
+                font=dict(size=11, color="#666666"),
+                xanchor="right", yanchor="middle",
             )
         else:
             # For median, show label with leader line
@@ -728,7 +737,8 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
                 x=-0.19, y=center_val,
                 ax=-30, ay=0,
                 showarrow=True, arrowhead=2, arrowsize=0.8, arrowwidth=0.5, arrowcolor="#999999",
-                text=f"<span style='font-size: 11px; color: #666666;'>median {center_label}</span>",
+                text=f"median {center_label}",
+                font=dict(size=11, color="#666666"),
                 xanchor="right", yanchor="middle",
             )
         
@@ -745,7 +755,7 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
         )
 
     fig.update_layout(
-        height=580,
+        height=500,
         margin=dict(l=50, r=160, t=8, b=8),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
@@ -773,9 +783,71 @@ def build_company_history_bar(df: pd.DataFrame, metric: str, company: str) -> go
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
-        title=dict(text=company, x=0.0, xanchor="left", y=0.98, yanchor="top", font=dict(size=19, color="#111111"), pad=dict(t=2, b=0)),
         xaxis=dict(showgrid=False, title="", tickfont=dict(size=15, color="#666666")),
         yaxis=dict(showgrid=True, gridcolor="#ececec", zeroline=False, showticklabels=False, title=""),
+    )
+    return fig
+
+
+def build_company_underlying_bar(df: pd.DataFrame, value_col: str, company: str, hover_name: str) -> go.Figure:
+    history = df[df["company"] == company].dropna(subset=[value_col]).sort_values("fiscal_year")
+    y_millions = history[value_col] / 1_000_000
+    fig = go.Figure(
+        go.Bar(
+            x=history["fiscal_year"],
+            y=y_millions,
+            marker=dict(color="#555555", line=dict(color="#111111", width=0)),
+            text=[f"${v:,.0f}M" for v in y_millions],
+            textposition="outside",
+            textfont=dict(size=16, color="#111111"),
+            cliponaxis=False,
+            hovertemplate=f"{company}<br>%{{x}}: $%{{y:,.1f}}M {hover_name}<extra></extra>",
+        )
+    )
+    fig.update_layout(
+        height=420,
+        margin=dict(l=8, r=12, t=18, b=8),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=False,
+        xaxis=dict(showgrid=False, title="", tickfont=dict(size=15, color="#666666")),
+        yaxis=dict(showgrid=True, gridcolor="#ececec", zeroline=False, showticklabels=False, title=""),
+    )
+    return fig
+
+
+def build_company_stock_candlestick(stock_df: pd.DataFrame, company: str) -> go.Figure:
+    cdf = stock_df[stock_df["company"] == company].copy()
+    cdf = cdf.dropna(subset=["date", "adj_close"]).sort_values("date")
+    cdf["fiscal_year"] = cdf["date"].dt.year
+    yearly = cdf.groupby("fiscal_year", as_index=False).agg(
+        open=("adj_close", "first"),
+        high=("adj_close", "max"),
+        low=("adj_close", "min"),
+        close=("adj_close", "last"),
+    )
+    fig = go.Figure(
+        go.Candlestick(
+            x=yearly["fiscal_year"],
+            open=yearly["open"],
+            high=yearly["high"],
+            low=yearly["low"],
+            close=yearly["close"],
+            increasing_line_color="#6f8a75",
+            decreasing_line_color="#9a6a6a",
+            increasing_fillcolor="#9fb2a4",
+            decreasing_fillcolor="#c7a0a0",
+            showlegend=False,
+        )
+    )
+    fig.update_layout(
+        height=420,
+        margin=dict(l=8, r=12, t=18, b=8),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        xaxis=dict(showgrid=False, title="", tickfont=dict(size=15, color="#666666")),
+        yaxis=dict(showgrid=True, gridcolor="#ececec", zeroline=False, showticklabels=False, title=""),
+        xaxis_rangeslider_visible=False,
     )
     return fig
 
@@ -820,6 +892,7 @@ def get_metric_analysis(df: pd.DataFrame, metric: str, metric_label: str) -> str
     michelin_rows = ranked.index[ranked["company"] == "Michelin"]
     rank = int(michelin_rows[0]) + 1 if len(michelin_rows) else None
     leader = str(ranked.iloc[0]["company"]) if not ranked.empty else None
+    leader_val = ranked.iloc[0][metric] if not ranked.empty else None
     michelin_history = df[df["company"] == "Michelin"].dropna(subset=[metric]).sort_values("fiscal_year")[metric].tolist()
     trend = "increasing" if len(michelin_history) > 1 and michelin_history[-1] > michelin_history[0] else "decreasing"
 
@@ -827,7 +900,8 @@ def get_metric_analysis(df: pd.DataFrame, metric: str, metric_label: str) -> str
     leader_str = f"led by {leader}" if leader and leader != "Michelin" else ""
     median_str = f"{format_pct(median_val)}" if median_val is not None else "N/A"
     val_2025_str = f"{format_pct(val_2025)}" if val_2025 is not None else "N/A"
-    leader_clause = f" Peers are {leader_str}." if leader_str else ""
+    leader_val_str = f"{format_pct(leader_val)}" if leader_val is not None else "N/A"
+    leader_clause = f" Peers are {leader_str} at {leader_val_str}." if leader_str else ""
 
     return (
         f"Michelin ranks {rank_str} among peers on 10-year median {metric_label.lower()}: {median_str}. "
@@ -856,7 +930,7 @@ def render_metric_tab(title: str, note: str, df: pd.DataFrame, metric: str) -> N
         f"</h4>",
         unsafe_allow_html=True
     )
-    st.markdown(f"**Analysis:** {analysis}", unsafe_allow_html=True)
+    st.markdown(analysis, unsafe_allow_html=True)
 
     toggle_key = f"basis_{title.lower().replace(' ', '_')}"
     basis = st.radio(
@@ -875,7 +949,7 @@ def render_metric_tab(title: str, note: str, df: pd.DataFrame, metric: str) -> N
     if missing:
         year_note += " Missing in this basis: " + ", ".join(missing) + "."
 
-    chart_left, chart_right = st.columns([1, 1.35], gap="large")
+    chart_left, chart_divider, chart_right = st.columns([1, 0.03, 1.32], gap="medium")
     with chart_left:
         # Bar chart title based on toggle
         basis_display = basis if basis == "2025" else "10-Year Median"
@@ -890,15 +964,68 @@ def render_metric_tab(title: str, note: str, df: pd.DataFrame, metric: str) -> N
             on_select="rerun",
             selection_mode="points",
         )
+    with chart_divider:
+        st.markdown(
+            "<div style='height: 470px; width: 1px; background: #111111; opacity: 0.18; margin: 0 auto;'></div>",
+            unsafe_allow_html=True,
+        )
     with chart_right:
-        st.markdown(f"**Top 2 + Michelin Over Time**", unsafe_allow_html=True)
         selected_company = extract_selected_company(selection)
         if selected_company:
-            st.plotly_chart(
-                build_company_history_bar(df, metric, selected_company),
-                width="stretch",
-                config={"displayModeBar": False},
-            )
+            if metric == "annual_stock_growth":
+                right_title = f"**{selected_company} stock price over time**"
+                right_sub = "<div class='chart-note' style='margin-top:-0.35rem;'>Yearly candlestick chart (open, high, low, close).</div>"
+            elif metric == "revenue_growth":
+                right_title = f"**{selected_company} revenue over time**"
+                right_sub = "<div class='chart-note' style='margin-top:-0.35rem;'>Underlying annual revenue values.</div>"
+            elif metric == "ebitda_growth":
+                right_title = f"**{selected_company} EBITDA over time**"
+                right_sub = "<div class='chart-note' style='margin-top:-0.35rem;'>Underlying annual EBITDA values.</div>"
+            elif metric == "dividend_growth":
+                right_title = f"**{selected_company} dividends over time**"
+                right_sub = "<div class='chart-note' style='margin-top:-0.35rem;'>Underlying annual dividend values.</div>"
+            else:
+                right_title = f"**{selected_company} {title.lower()} over time**"
+                right_sub = f"<div class='chart-note' style='margin-top:-0.35rem;'>{selected_company} over time.</div>"
+        else:
+            right_title = f"**{title} over time**"
+            center_note = "centered at 0%." if metric in ["revenue_growth", "ebitda_growth", "annual_stock_growth", "dividend_growth"] else "centered at median."
+            right_sub = f"<div class='chart-note' style='margin-top:-0.35rem;'>Michelin versus top 2 competitors, {center_note}</div>"
+
+        st.markdown(right_title, unsafe_allow_html=True)
+        st.markdown(right_sub, unsafe_allow_html=True)
+
+        if selected_company:
+            if metric == "annual_stock_growth":
+                st.plotly_chart(
+                    build_company_stock_candlestick(stock_prices_daily, selected_company),
+                    width="stretch",
+                    config={"displayModeBar": False},
+                )
+            elif metric == "revenue_growth":
+                st.plotly_chart(
+                    build_company_underlying_bar(df, "is_sales_revenue_turnover", selected_company, "Revenue"),
+                    width="stretch",
+                    config={"displayModeBar": False},
+                )
+            elif metric == "ebitda_growth":
+                st.plotly_chart(
+                    build_company_underlying_bar(df, "ebitda", selected_company, "EBITDA"),
+                    width="stretch",
+                    config={"displayModeBar": False},
+                )
+            elif metric == "dividend_growth":
+                st.plotly_chart(
+                    build_company_underlying_bar(df, "dividend_paid_abs", selected_company, "Dividends"),
+                    width="stretch",
+                    config={"displayModeBar": False},
+                )
+            else:
+                st.plotly_chart(
+                    build_company_history_bar(df, metric, selected_company),
+                    width="stretch",
+                    config={"displayModeBar": False},
+                )
         else:
             others = [c for c in ranked["company"].tolist() if c != "Michelin"][:2]
             sparkline_companies = ["Michelin"] + others
@@ -960,6 +1087,8 @@ def render_chatbot() -> None:
                 "Does Michelin structurally outperform peers on margins?",
                 "What explains Michelin's revenue growth versus Goodyear and Bridgestone?",
                 "Which peer is most comparable to Michelin on profitability?",
+                "Why has Sumitomo's stock price grown so rapidly?",
+                "Why does Michelin maintain margins higher than their competitors?",
             ]
             for idx, suggestion in enumerate(suggestions):
                 if st.button(suggestion, key=f"single_page_suggestion_{idx}", width="stretch"):
@@ -1016,7 +1145,7 @@ def render_chatbot() -> None:
             st.rerun()
 
 
-income, margin_data, stock_growth_data, dividend_growth_data, ratios_data, latest_year = prepare_competitive_frames()
+income, margin_data, stock_growth_data, dividend_growth_data, ratios_data, stock_prices_daily, latest_year = prepare_competitive_frames()
 margin_latest = latest_metric_frame(margin_data, "ebitda_margin")
 michelin_row = margin_latest[margin_latest["company"] == "Michelin"]
 michelin_margin = michelin_row.iloc[0]["ebitda_margin"] if not michelin_row.empty else None
@@ -1038,18 +1167,32 @@ st.markdown(
     "</div>",
     unsafe_allow_html=True,
 )
-st.markdown(
-    f"<div class='kicker-grid'>"
-    f"<div class='kicker-card'><div class='kicker-label'>Latest Margin Year</div><div class='kicker-value'>{latest_year}</div></div>"
-    f"<div class='kicker-card'><div class='kicker-label'>Michelin EBITDA Margin</div><div class='kicker-value'>{format_pct(michelin_margin)}</div></div>"
-    f"<div class='kicker-card'><div class='kicker-label'>Michelin Rank</div><div class='kicker-value'>{michelin_rank_text}</div></div>"
-    f"</div>",
-    unsafe_allow_html=True,
-)
 
 st.markdown("<h2 class='section-title'>Does Michelin have a strong competitive moat?</h2>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='section-deck'><strong>Left:</strong> Competitive metrics from income statements, cash flows, stock prices, and financial ratios across the 10-year period. <strong>Right:</strong> AI analyst with access to SEC filings (10-K, 10-Q), earnings transcripts, news feeds, and patent analytics to contextualize the numbers.</div>",
+    "<div class='section-deck' style='max-width:none;width:100%;box-sizing:border-box;background:#f8f8f8;border:1px solid #ececec;padding:1.1rem 1.2rem;border-radius:8px;white-space:nowrap;overflow-x:auto;overflow-y:hidden;'>"
+    "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin-bottom:0.5rem;'><strong>Thesis</strong></div>"
+    "<div style='margin-bottom:0.6rem;'>Companies with strong competitive moats and disciplined management tend to show the following traits:</div>"
+    "<ol style='margin:0.1rem 0 1rem 1.35rem;padding:0;line-height:1.45;white-space:nowrap;'>"
+    "<li>Higher margins than peers.</li>"
+    "<li>Exceptional return on invested capital (ROIC).</li>"
+    "<li>Increasing shareholder returns through stock price appreciation and dividend growth.</li>"
+    "<li>Sustained revenue and profit growth driven by operational excellence and innovation.</li>"
+    "</ol>"
+    "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin:0.25rem 0 0.5rem;'><strong>Methodology</strong></div>"
+    "<ul style='margin:0.1rem 0 1rem 0.25rem;padding:0;line-height:1.45;white-space:nowrap;list-style:none;'>"
+    "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Companies:</strong> Michelin, Bridgestone, Goodyear, Continental, Pirelli, Sumitomo.</li>"
+    "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Sources:</strong> Curated income statement, cash flow, ratio, and stock price datasets; supporting transcripts, filings, and news for context.</li>"
+    "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Timelines:</strong> Financial comparisons use 10-year history plus 2025 snapshots; stock views include yearly OHLC from daily adjusted-close data.</li>"
+    "</ul>"
+    "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin:0.25rem 0 0.5rem;'><strong>Conclusion</strong></div>"
+    "<ul style='margin:0.1rem 0 0 0.25rem;padding:0;line-height:1.45;white-space:nowrap;list-style:none;'>"
+    "<li><span style='color:#6e9f76;font-weight:700;margin-right:0.5rem;'>✓</span>Michelin consistently posts the highest margins among peers, suggesting a differentiated competitive edge.</li>"
+    "<li><span style='color:#6e9f76;font-weight:700;margin-right:0.5rem;'>✓</span>Michelin appears to demonstrate strong capital discipline, with the second-most efficient capital deployment among peers.</li>"
+    "<li><span style='color:#6e9f76;font-weight:700;margin-right:0.5rem;'>✓</span>Michelin has delivered steady long-run dividend growth, though some competitors, including Sumitomo and Pirelli, have shown stronger stock price growth.</li>"
+    "<li><span style='color:#b06565;font-weight:700;margin-right:0.5rem;'>✗</span>Michelin appears to lag in revenue growth, which weighs on profit growth and may indicate challenges in capturing share through innovation or M&amp;A.</li>"
+    "</ul>"
+    "</div>",
     unsafe_allow_html=True,
 )
 
