@@ -1,6 +1,48 @@
 # 🏎️ Wheel Street
 
-An interactive application that compares the financial performance of six major global tire manufacturers using data from [roic.ai](https://roic.ai). Features an AI-powered analyst chatbot built with LangGraph that can answer natural language questions about the companies.
+Wheel Street is an interview-ready application that evaluates whether Michelin has a durable competitive moat relative to major tire peers. It combines a financial comparison dashboard, company-level evidence, and a LangGraph-powered analyst that can answer grounded questions using local financial and text data.
+
+## Start Here
+
+If you are reviewing this project for an interview, this README is the best entry point:
+
+1. Understand the core question and conclusion in [docs/01_project_brief.md](docs/01_project_brief.md).
+2. Review the underlying datasets and coverage in [docs/02_data_sources.md](docs/02_data_sources.md).
+3. See how the system is structured in [docs/03_system_architecture.md](docs/03_system_architecture.md).
+4. Review implementation choices in [docs/04_tech_stack.md](docs/04_tech_stack.md).
+5. Inspect the analytical approach in [docs/05_analytics.md](docs/05_analytics.md).
+6. Review the AI workflows in [docs/06_agents.md](docs/06_agents.md).
+
+## Documentation Guide
+
+| Topic | What It Covers | Link |
+|------|------|------|
+| 01 Project Brief | Objective question, thesis, method, conclusion, and success criteria | [docs/01_project_brief.md](docs/01_project_brief.md) |
+| 02 Data Sources | Source systems, company coverage, timelines, gaps, and ETL reference | [docs/02_data_sources.md](docs/02_data_sources.md) |
+| 03 System Architecture | End-to-end flow, package structure, runtime components, and rationale | [docs/03_system_architecture.md](docs/03_system_architecture.md) |
+| 04 Tech Stack | Application, AI, data, and deployment stack with tool choices | [docs/04_tech_stack.md](docs/04_tech_stack.md) |
+| 05 Analytics | Financial analytics, patent analytics, metrics, and comparison logic | [docs/05_analytics.md](docs/05_analytics.md) |
+| 06 Agents | Financial analyst and patent analyst workflows, toolchains, and response behavior | [docs/06_agents.md](docs/06_agents.md) |
+
+## Review Summary
+
+### 01. Project Brief
+The project asks a focused question: does Michelin exhibit a stronger competitive moat than peers? The working thesis is that durable moats show up in margin strength, capital efficiency, shareholder returns, and sustained growth. The app tests that thesis through a six-company comparison set and interactive drilldowns.
+
+### 02. Data Sources
+The application uses snapshot-based financial, market, transcript, news, and patent-related datasets. Core financial data comes from ROIC.ai, while patent analytics are built on USPTO-derived data. ETL is organized so extract, transform, and load stages are clearly separated and rerunnable.
+
+### 03. System Architecture
+The system uses a simple but defensible structure: Streamlit for the interface, Plotly for analytics, LangGraph for the agent loop, and DuckDB/local JSON for evidence storage. This keeps the demo stable while still showing practical agentic architecture and local data grounding.
+
+### 04. Tech Stack
+The stack is intentionally pragmatic: Python, Streamlit, Plotly, Pandas, DuckDB, LangChain, LangGraph, Docker, and Render. Each choice optimizes for interview signal, development speed, and reproducibility rather than maximum framework complexity.
+
+### 05. Analytics
+The financial analytics section compares Michelin against peers using EBITDA Margin, ROIC, Dividend Growth, Annual Stock Growth, Revenue Growth, and EBITDA Growth. The patent analytics section is structured as a second analytical track, with ingestion and summarization already in place for future UI expansion.
+
+### 06. Agents
+The financial analyst agent uses a tool-calling workflow to answer questions with quantitative evidence from local data. A patent analyst structure is also documented, showing how the project can extend beyond financials into innovation analysis using the same evidence-first design pattern.
 
 ## Companies Analyzed
 
@@ -30,6 +72,13 @@ A LangGraph-powered conversational agent that answers questions about the tire i
 - `search_news` — Search recent news articles
 - `get_stock_performance` — Price performance over custom periods
 - `get_company_overview` — Company profile with financial highlights
+
+## Why This Project Is Easy To Review
+
+- The project is organized around one clear business question.
+- The documentation is numbered in reading order for interview review.
+- The app runs from committed local data snapshots, so behavior is reproducible.
+- The AI layer is grounded in explicit tools and local evidence rather than vague freeform prompting.
 
 ## Architecture
 
