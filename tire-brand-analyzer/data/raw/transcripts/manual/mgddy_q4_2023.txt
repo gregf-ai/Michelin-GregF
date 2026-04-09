@@ -1,0 +1,329 @@
+Compagnie Générale des Établissements Michelin Société en commandite par actions (MGDDF) Q4 2023 Earnings Conference Call February 12, 2024 12:30 PM ET
+
+Company Participants
+
+Florent Menegaux - Chief Executive Officer
+Yves Chapot - General Manager and Chief Financial Officer
+
+Conference Call Participants
+
+Thomas Besson - Kepler Cheuvreux
+Martino De Ambroggi - Equita
+Michael Jacks - Bank of America
+Jose Asumendi - JPMorgan
+Monica Bosio - Intesa Sanpaulo
+Sanjay Bhagwani - Citigroup
+Steve Fernandes - Societe Generale
+Ross MacDonald - Morgan Stanley
+
+Florent Menegaux
+
+Good evening. Yves Chapot and myself are very happy to welcome you to our 2023 Annual Results Presentation. And as you are going to see, then our results are very solid.
+
+I'm very pleased to report that Michelin has delivered a high segment operating income despite adverse market conditions and currencies. We have been demonstrating, again, the quality of our business model, while improving people engagement and accelerating our sustainability roadmap. This reflects our group strategy to capture the full value of our differentiated offers and solutions that are designed to meet increasingly demanding customer requirements. Our sales have been flatish at EUR28.3 billion, but they were up 2% at constant exchange rates, with mix and price offsetting unfavorable market conditions. Our non-tire sales were up 10%.
+
+So if we zoom in on our revenue, the tire selling markets were globally flat, but with an adverse mix and with OE growing in most segments and replacement facing massive destocking. The tire sales volumes were down 4.7%, reflecting our growth strategy of prioritizing markets and segments that do appreciate our unique value proposition. Our price and mix effects were up 5.7%, of which 1.2% was the mix, pulled by both products and geographies. Our non-tire sales were up 10%, which means around EUR146 million at constant scope of consolidation. And by the way, I'm happy to report that in the integration of our latest acquisition, Flexible Composite Group, is well on track. We had this year a negative 2.9% adverse exchange rate effect as most currencies declined against the euro.
+
+If we now look at our segment operating income, it reached an all-time high of EUR3.6 billion and the margin were up 0.7 points -- 70 basis points to 12.6% of our sales. The price effect was lifted by the lag impact of 2022 adjustments. We had a substantial mix effect resulting from market and segment targeting, combined with our groups enhanced value proposition. We improved operating performance and offsetting cost inflation factors. Our free cash flow before acquisition was at EUR3.3 billion, reflecting improving EBITDA and a sharp reduction in working capital. Our EBITDA was up 4% -- sorry about that, at EUR5.5 billion or 19.4% of our sales.
+
+We had a EUR1 billion reduction in working capital, and that was driven mainly by the decline in both inventory volumes and value. We had a positive EUR200 million contribution from JVs and associates, notably the TBC distribution JV we have in the US. Our ROCE reached 11.4% and was up 60 basis point, reflecting our intrinsic performance and our active portfolio management. Our net income was stable at EUR2 billion, despite the inclusion of EUR600 million of our provision for our industrial restructuring. That's why we propose a dividend of EUR1.35 per share that will be submitted to our shareholder meeting in month of May and that represent a 8% increase versus 2022.
+
+As we had a strong cash flow generation and we can accommodate our investment and our acquisitions, we will also propose a share buyback program, which could be worth up to EUR1 billion over the period 2024-2026. And as it comes to the 2024 guidance, we would guide on an excess of EUR3.5 billion for the segment operating income at constant exchange rates, and we will guide at EUR1.5 billion for the reported free cash flow before acquisitions. And sometimes it's good to zoom back on what we have achieved and I'm very pleased by the overall performance of our group over the years.
+
+If you start from 2007 up to 2023, you look at the green bars, this is our segment operating income. If you look at the blue bars, it will be our free cash flow generation. And what you will see, we have been -- regarding our segment operating income, constantly increasing despite, and that's the red dots, the sharp fluctuations of our volumes because we are constantly improving our return on every of our activities. And our cash flow generation is gradually moving to new levels, on average at EUR1.5 billion, where it used to be below EUR1 billion in the year past. So this is a very strong testimony to all the efforts all our employees are making every day, all the efforts, all that our people are inputting to develop Michelin.
+
+And now, I leave the floor to Yves who will induce you to more details about our performance in 2023.
+
+Yves Chapot
+
+Good evening everyone. Before moving to the detail of the financial performance, as Florent mentioned, the Group has delivered a very solid performance in 2023, but beyond the profit side that we'll detail later on, I would like also to show you how we perform on the people and the planet areas. On the people side you see here three indicators, all are improving. The percentage of women in managerial positions has improved by 1.2 points in 2023. The total case of incident rates, which reflect the safety at work of our employees, is at 1.01 per 200,000 hours of work, so it's 0.06 points versus 2022. And our employee engagement is at, all time high at 83.5%, 1 point above 2022.
+
+On the planet side, the Group is decreasing its footprint on its operations. Our CO2 Scope 1 and 2 emissions, so the emissions due to the production of energy or the purchase of energy from our factories has decreased by 6% during 2022, with a lot of drivers, electrification of our processes, access to more sustainable energy sources, and improvement of the efficiency of our processes. The water withdrawal has been decreasing by 10% over -- during the year, thanks also to a lot of initiatives taken in the different group sides. The share of renewable and recycled material rates has decreased by 2 points in -- from 30% to 28%, and it mostly reflects an evolution in the weight of our different business segments.
+
+Our truck and bus and specialty businesses weight versus our passenger car businesses has decreased. And this is the activities that are using the most natural rubber, which explained this decrease of 2 point in our renewable and recycled material rates. But in parallel, the group has continuously, improved its usage of [indiscernible] recycled material. And it does not impair our ability to reach 40% of sustainable, renewable, and recycled material rate by 2030.
+
+So now zooming on our business and financial performance, let's have a look on the market. At the end of the year, the passenger car and light truck markets have slightly increased by 2% with a rather favorable fourth quarter, mostly driven by the original equipment market, which increased by 9%, when replacement market has been basically flat. On the truck and bus side, the market has decreased. Outside China, the market has decreased by 4%, which reflect a slight increase in OE by 1% and a decrease in the replacement market by 5%.
+
+Looking at specialties markets, they are, let's say, negative or slightly negative, around zero, with very contrasted situation. Some markets have been hurt by some cyclicality issues or some crisis, for example, the construction market, in a lot of developing countries and developed markets. Agriculture also is down. Material handling is slightly decreasing. And tools has been also a market impacted after two, three years of booming after the COVID. On the other hand, aircraft market has recovered. If we look at the, for example, commercial airlines market has recovered at 2019 level. And the mining market is increasing gradually at a single digit -- low single digit rate.
+
+So in terms of sales, as Florent mentioned, at constant exchange rate [indiscernible] sales has grew by 2%, with a negative impact of volume of 4.7%, bit of positive impact of price and mix, 5.7%. Non tire businesses contributed to 0.5 point of our overall growth. And currency is massively negative, EUR800 million or minus 2.9%, of which, 83% occurred during the second half of the year.
+
+Now looking at the translation of that in operating income. So despite very negative ForEx, as I mentioned, the segment operating income of the group is at the all-time high, at three -- nearly EUR3.6 billion. And if you look at the way this SOI has been built over the year, in fact, if you exclude the effect of the currencies, our SOI has increased by $470 million, half during the first year and half during the second year.
+
+Looking now at the net improvement, including currency, so plus EUR176 million. You see that the price mix has, let's say, more than compensated negative volume effect at minus EUR700 million. When raw material, manufacturing, logistics performance and SG&A has been still slightly negative [indiscernible] insurance, where prices were decreasing, such as raw materials. We have also seen a decrease of energy. But on the other hand, we have [indiscernible] some increase in labor cost on some services. And non tire businesses contributed EUR6 million to this improvement.
+
+Though looking at the performance segment per segment, you see that the segment number one, the automotive market post recall high operating margin at 13.7%, mostly driven by the mix improvement, our sales of 18 inches and above tires at the Michelin brand reached 61% of our total sales in value versus 56% in 2022. On the truck and bus market or transportation market, both long distance and urban, you see a decrease in the operating margin of 2.1%, mostly driven by a massive destocking in distribution and fleets. Mix which was very negative between original equipment and replacement market. But at the same time, if you remember well, the group posted 5% operating margin at the end of the first half. It means that the second half was already at 8%, which is nearly the level of the full year 2022. So this activity is recovering -- had recovered during the second half.
+
+Specialty businesses posted 16.5% operating margin, 1.6 points above 2022, mostly driving by the mining demand and some segments of the aircraft businesses that have been growing sharply. On the other hand, most of our Beyond-road’s activities, plus the two wheels businesses were negatively contributing to the growth and has been suffering during the year. And the segment three is probably is the segment which has been the most impacted by the currency and particularly the US dollar evolution over the second half of 2023.
+
+Our free cash flow here also is at all time high at EUR3 billion You see that we have generated 19.4% EBITDA at EUR5.5 billion. Change in working capital has been contributing heavily to this cash generation, nearly EUR1 billion, of which, EUR775 are coming from inventory, of which one-quarter is nearly coming from prices effect and three-quarter from the volume effect. And it reflect the way our teams have improved in managing our S&OP processes, sales and operation processes and monitor our inventory.
+
+Taxes and interest paid during the year reached nearly EUR1 billion, of which, EUR776 million are taxes paid to governments. Our CapEx were in line with our expectation. And I would like also to underline the strong performance of our joint ventures, [partially] (ph) TBC, which has contributed positively to our cash generation, a little bit more than EUR200 million over the year. And of course, we acquired FCG for a little bit more than EUR7 million, plus we have starting to more actively manage our portfolio of activities, which lead us to spend EUR666 million in acquisition.
+
+So this strong cash generation has allowed us to decrease our debt by nearly EUR1 billion over the year. We spend, of course, a dividend, nearly EUR900 million. We have some translation adjustments, and we have also made a specific contribution loan to our pension fund in the UK in order to prepare buying process. Our gearing ratio land at 18.3%. And most of our ratings has been confirmed by the three rating agencies.
+
+We already mentioned our return on capital employed, which is also at the record at 11.4%. In 2021, when we launched our Michelin Motion 2030 ambition, we have mentioned that our objective was to generate 10.5% ROCE at least over the cycle. And that has been in 2023 case at 11.4%, mostly thanks to the NOPAT, the net operating profit after tax which has reached 9.5% of our sales in 2023 versus 8.5% in 2022. We had also an asset turnover ratio, which has been sustainably above 2019 level. And in 2023, of course, the contribution of our equity accounted companies fostered by our active portfolio management has contributed to this improvement in the ROCE.
+
+So now in terms of shareholder return, as Florent mentioned, we are going to propose to the next shareholder meeting dividend of EUR1.35 per share, which represent nearly 49% of our reported net income and which is in line with the targets that we shared with you during the Capital Market Day in 2021. To complement this dividend, we will launch a share buyback program worth up to EUR1 billion over three years, which is triggered by the fact that financially there is no interest to deleverage -- to further deleverage the company. The group has a very sound financial balance sheet. And we'll continue to generate cash. Our next -- if we look at the duration of our gross financial debt is around nine years. Our next bonds payment is planned for September of 2025. So we consider that we have room to share -- to buy back some of our shares during the next three years.
+
+So before moving to the 2024 guidance, just some reminder of probably one of the fundamental reason why the group is able to generate such robust performance. It's first and foremost because of the wide diversity of the destination markets, that we are serving. The automotive original equipment market, which is probably one of the most cyclical businesses with some specialty tire businesses represent 10% of our sales.
+
+Transportation, so truck and buses, both long distance and urban transportation, around 20%. Specialty tire that are mostly driven by the evolution of commodities, both mining, but also agricultural communities -- commodities represent 18% of our global sales. Polymer composite solutions, so what we used to call Beyond-Tyres activity represent 5%. And even within our free, let's say, traditional tire segment, the share of services, either fleet services, distribution and lifestyles represent 11% of our sales. And last, the replacement sales for automotive, both four wheels and two wheels, represents 36% of our sales. So it's a distribution which is well balanced between services, replacement, original equipment and more, let's say, business to business activities.
+
+On the geographical standpoint, North America is our largest contributor at 39%. Europe represents 35% of our global sales and the rest of the world, 26%. Zooming now on the acquisition of FCG. So we have acquired the company at the end of September 2023. So we have now passed the 100 days of -- first days of integration. And this integration is well on track. We are able to confirm the EUR21 million run rate EBIT synergy by 2028. We have created within the group a specific business line dedicated to composite fabrics and films. And the teams have started already to generate some synergies. Of course, very short term synergies has been already implemented during the first 100 days. But our -- we want to combine Michelin unique R&D capabilities with FCG's strong customer intimacy and mastering of the manufacturing of its manufacturing processes and understanding of the manufacturing processes of its customers. And that's -- all the elements -- all these elements are confirming the figure that we shared with you in September at the acquisition.
+
+So now moving to the guidance, maybe some words on the evolution of the market. So at this time of the year, it's always very difficult to predict how the markets are going to behave. But, let's say, overall, we believe that the overall market should be selling market somewhere flat, with probably a positive mix effect, with a slight increase in replacement and a decline in the original equipment, and that all across the three segments, the pattern of the market will not, let's say, during the year will not massively change versus 2023. For passenger car and light truck tire market, we believe that OE should slightly decrease in demand, mitigated by some restocking by OEMs, particularly in North America. In replacement, we believe that even if market overall might be soft, the continuous mix enrichment will provide us opportunities for growth in this segment.
+
+For Truck and Bus, we think that the main event will be a rebalancing between original equipment and replacement market. And as now, the destocking has been done both at the transportation companies and at distributors. We think that we might have a slight growth driven by underlying transportation demand. Specialties, here also, all in one, when we consolidate we believe that overall it should be somewhere flattish. Mining tires, there is still some strong fundamental demands that are holding high. Market will be -- might be a little bit impacted by minor stock fluctuations. Beyond-road, we also consider a slight growth across replacement, while original equipment sales will turn negative, the two wheels market will probably need sometimes to further consolidate after the boom of the -- two years following the COVID crisis, and the aircraft tire market should normalize after the very strong 2023 year growth, which lead this market to be back at the pre COVID level.
+
+So having integrated all these elements, we believe that -- the assumption that we took in order to build our 2024 budget, was based on volume slightly negative between zero and minus two. Probably slightly positive operating performance net of inflation. So by operating performance, we include, of course, operation, mix, price versus inflators. In the inflators, some are probably going down, but some will maintain -- will probably continue to grow labor cost or services, inflators might still be here next year. And we believe that overall inflation should not be too far from zero.
+
+Our CapEx cash out should be nearly at the level or slightly above the level of 2023. So therefore, we are guiding with segment operating income above EUR3.5 billion and free cash flow above EUR1.5 billion. I just remind you that, of course, we have generated EUR3 billion free cash flow in 2023, but after nearly zero in 2022. And so now the group is tending towards generating, of course, taking into account there will be no major fluctuation in raw material and energy, which will impact, of course, the price of our inventories. But we consider that the group should generate constantly a free cash flow above 1.5 billion in 2024.
+
+So thank you very much. And now I think it's time for the Q&A.
+
+Florent Menegaux
+
+Yves, so open the floor for the Q&A.
+
+Question-and-Answer Session
+
+Operator
+
+This is the conference operator. We will now begin the question-and-answer session. [Operator Instructions] The first question is from Thomas Besson with Kepler Cheuvreux. Please go ahead.
+
+Thomas Besson
+
+Firstly, could you discuss your volume assumptions again for 2024? Minus two to zero implies you may have a third consecutive year of volume decline and tire markets could fall for a fourth consecutive time for the first time, I think. It would mean you have four out of five years that are negative, which is also unprecedented. So is it fair to say it might be a bit conservative? Second question. Could you give us an idea of the timing of your restructuring of outflows over 2024, 2025, and 2026 on the announcement you booked in 2023, and give us some indications on the payback of these restructuring actions.
+
+And finally, would you please explain us again, maybe I didn’t catch that very well. How your margins rebounded strongly in the second half in Trucks, despite weaker volumes even in H1, while at the opposite, specialty margins drops on the similar volume trend in Q4. Thank you.
+
+Yves Chapot
+
+Very good. So answering your first question about the volume assumption for 2024, it's always difficult to predict. When we look at the macroeconomic environment in which we operate, we have uncertainties in Europe macro-economic wise, uncertainties also in North America. We have general election happening also in India. China is recovering, but at a speed that is less than what we had anticipated before. So that's why when we look at the market outlook, when look at the mileage, it should be steady overall. So we have no reason to imagine that the market will strongly rebound.
+
+So it is true that for a strong period -- for a long period, the market will be flattish over the period. So hopefully, we would be wrong. But at this stage, that's what we anticipate. So for the restructuring, overall, most of the restructuring cash outflow will happen in 2024 and 2025. There might be some residual one in 2026, but you can consider it's probably on 100%, it will be 40%, 40% and 20% overall. And the payback, we are expecting global saving close to EUR200 million by full year in 2016, but it should partially start to be visible in our operating performance in 2025. So the full year will be probably in 2026.
+
+And regarding the last question on the recovery of the operating margin in SR2. SR2, if I remember well, was at historical low level in the first half of the year. And if you look at the operating margin of SR2 on the second half, it was 8%. So it's nearly the level of 2022 full year, mostly driven by improvement in operation, a slight rebalancing between original equipment and replacement, where we have very strong sales during H1 in OE and better piloting of the operations.
+
+Florent Menegaux
+
+And maybe if I can complement what Yves was saying. During 2023, we had to adjust inventories and because -- our sales, but also in the entire supply chain. While you do that, you cannot optimize your industrial assets. And what we have seen during the second semester is, as the inventories were getting back to more normal levels our plant loading was better, which has improved the industrial performance and therefore improved the margins. So -- and we anticipate that 2024, as Yves explained, the inventory adjustment will be over by the end of 2024. And therefore, our plant loading will be better -- and if you combine that with some first effect of the restructuring we have announced, that's why we are confident in our ability to structurally improve the margin on SR2.
+
+And for SR3, it's the same as what we have been saying for a long time. We have on Beyond-road activities, some structural adjustment to make. One mining, there is mining right now at the level of inventories at our customers at adequate level. So the sell-in should come out to the sell-out. So what we will sell is what goes on the truck and not what goes on replenishing the inventory. That's why we have a temporary volumes that will be flattish in the beginning and then go back to more normal levels. So that's why we are also confident in our ability to have segment three performing.
+
+Thomas Besson
+
+Great. Thank you very much. Very clear.
+
+Operator
+
+The next question is from Martino De Ambroggi with Equita. Please go ahead.
+
+Martino De Ambroggi
+
+Thank you good evening everybody. The first question is on -- specifically on the mix stand-alone, maybe I missed it. But could you quantify what was the impact on the operating profit in 2023 just for the mix because if I look at one of your slides in which you indicate that the 18 inches and above will contribute -- contributed and will continue to contribute for more than EUR100 million per annum. I was wondering what is the split of all the components of the mix for 2023.
+
+And the second question is on prices because in Q4, they were basically flat. So what you -- should we expect in 2024 by division? I don't know if you have any comment -- additional comment on the investigation, I suppose not. But I suppose this will not influence the price discipline, always testified in the past. And very last on the specialty, I clearly understand some of your indications for the main sectors. Just to understand what could be the specialty stand-alone sales for 2024. Thank you.
+
+Florent Menegaux
+
+Okay. So regarding the mix, as I said, in 2023, it was 1.2% out of the overall price/mix effect that we projected. Now the mix as usual, is a very complex component, because you have different type of mix. You have the mix of geographies. You have the mix between OE and replacement. You have the mix between the brands. You have the mix between the set parameters in passenger car. You have the mix of the type product you sell and with -- to which customers you sell in the mining or Beyond-road. So when you take all these mix, unfortunately, we cannot detail them to you there.
+
+Now what we know, overall, we have a positive mix effect that leads to your second question on the price going forward. First, I want to make a statement, which is we price what we think is right on every market, and that's it. And then, yes, the prices -- again, in pricing we have more than 4,500 SKUs to price. So when we talk generally about price, it's very complex because it's constantly moving. Now we do not detail the price effect by division. But what I can tell you is that, as you know, we have a portion of our revenue that is made on index contracts. That going forward, those index contracts will have to reflect the fact that some input costs will be -- have been diminishing and therefore, those price index contract will reflect this.
+
+Now overall, for 2024, we -- all what we are doing in terms of operational performance, all we're doing in managing better the plant loading, all what we're doing with our structural reforms and all we're doing to manage our prices will offset globally, this negative effect that we can anticipate on the index contract going forward. And maybe for the other questions, Yves?
+
+Yves Chapot
+
+Yes. For the specialty sales. So mining, we are betting on a slight growth with -- driven by the demand of the mines, knowing that we also monitor the inventory of our mining customers, which are generally in average around six months, given the time to reach their location. On the Beyond-road activities, we are expecting decrease in the original equipment demand, both for agriculture and construction. And with the replacement market, that will be probably flat. And we are expecting the -- the two-wheel business probably will need sometimes to recover a healthier situation after -- it's probably the only market we didn't mention that at the beginning, where there is still a lot of inventory in the value chain, both of tires, but of vehicle as well, partly if you look at the bicycle segment. And this market will probably need sometimes to fully recover.
+
+Martino De Ambroggi
+
+If I may, just a follow-up on the 18 inches and above. You improved by 4 percentage points in 2023, should we assume this trend 3, 4 percentage point higher every year in order to get the EUR100 million improvement in operating profit.
+
+Florent Menegaux
+
+Yes, yes, we have been improving by 5 points in 2023. And if you look only at the Machine brand. And if you look in the past seven years, these sales has incrementally increased by 3 to 5 points year after year.
+
+Martino De Ambroggi
+
+Okay. Thank you.
+
+Operator
+
+Next question is from Michael Jacks with Bank of America. Please go ahead.
+
+Michael Jacks
+
+Hi, good evening. Thanks for taking my questions as well. Maybe just starting with pricing, it would appear that your framework is for a stable pricing environment in replacement markets for 2024. I guess that's the question and the statement. And after the last period of high cost inflation and price increases dating back, I think 2010 to 2012, Michelin reported three or four years of price decreases in the region of around 3% to 4%, which I guess would suggest that there was price declines in replacement as well. My question to you is what do you believe is the main difference this time around to suggest that prices in replacement market should hold up better.
+
+And then my second question is with regards to the manufacturing and logistics cost performance in the second half, which seems to be the main source of the upside the price relative to consensus. It would be great if you could just give us a sense on how that was derived or made up and whether or not we can expect a similar tailwind into the first half of this year? And then maybe just related to that, if you could just give us a little bit more color on the puts and takes for the various cost categories for this year, including [raw mets] (ph), energy, logistics and wages. Thank you.
+
+Florent Menegaux
+
+So in the first element, we are always pricing what I was saying, what we think is right in the market, and that's it. So which means that, again, SKU by SKU, customer by customer, we are analyzing all the time, and we look at what the prices are right. Fundamentally, we price our technology. We have a very strong technology. We price our performance. We provide a lot of value to all our customers, whether they are original equipment, whether they are on replacement. And that's what we do all the time.
+
+Now sometimes people think our pricing is indexed on inflation. But again, if you look at inflation, it is true that some input costs are decreasing, but also there is the implied inflation in wages that have derived from all the inflation we went through over the past years and that inflation will stay. So -- and the inflation is above what we can do in terms of productivity. So we have to take that into consideration when we look at our pricing.
+
+And again, we are embarked having a good adequation between the quality of what we offer in the market and the return we can get out of the market. Now for the cost assumption, I'm not sure we can detail all our cost structure, but we can give you some order of magnitude. Maybe, Yeves, you can give some color, but…
+
+Yves Chapot
+
+Yes, it's mostly color because, as you said, Florent, there will be some inputs that are going -- that will see their price decreasing such as raw material, maybe a little bit of energy. Transportation and Logistics is still a question mark. We have seen a sharp decrease in 2023, but with the crisis ongoing in the Red Sea, it's probably too early to bet on what will be in the final logistic cost for the year. There is, on the other hand, some elements as Florent mentioned, that are going to continue to increase. We mentioned labor cost, but as well as the services that we are purchasing either in our manufacturing operations, but also in our tertiary operations. So all in one, we believe that all these costs will probably, at this stage of the year again, neutralize each other. And that's why we believe that from the inflation standpoint, it will be not negative, not positive but probably around zero.
+
+And of course, in front of that, we are trying first to better load our factories, which is the best way to improve our performance by better managing our fixed costs. Of course, the structural measures that we have announced in 2023 will probably start to have effect only on 2025, but on the end of 2024, we should see some first signs of better capacity utilization. And of course, the group is working on a lot of drivers, such manufacturing 4.0 using new technologies in our services areas in order to improve the productivity. So all in one, taken all these aspects, plus the price and mix effect that were mentioned by Florent, we believe that we should be able to generate slightly positive improvement versus all the inflators I mentioned previously.
+
+Michael Jacks
+
+Thank you. And then if I could just perhaps come back to my second question. If there's any color that you can add to the positive manufacturing and logistics performance in H2, that would be super helpful. Thank you.
+
+Florent Menegaux
+
+Yes. The color what we explained, if we look at 2023, at the beginning of the year, we had to adjust our inventories and therefore, our plant loading was really poor. And as we completed this inventory adjustment, then the inventory yielding, especially in Q4 was much better in relative terms. And that's what we -- we have adjusted the -- our inventories our plant loading is structurally better just because of that. And that's what we are entering 2024 with this -- with this…
+
+Florent Menegaux
+
+If you look at just what we call our manufacturing and logistics performance in our segment operating income bridge, it was minus EUR300 million on the first half of the year. And plus EUR224 million, so positive during the second half. So of course, in the plus EUR224 million, there was some deflation, if I say, partially on the energy cost or some transportation costs, but there was also the fact that partially during the last quarter of the year, we have a better management of our capacities than at the beginning of the year.
+
+Michael Jacks
+
+That’s very helpful. Thank you.
+
+Operator
+
+The next question is from Jose Asumendi with JPMorgan. Please go ahead.
+
+Jose Asumendi
+
+A couple of questions, please. I was wondering if you could comment on the closure of the tractor plant in Germany. How much will improve the load of the plants in the truck tire division in Europe or overall, if you could comment that, please. Second, if you could comment also on our [indiscernible] group that price mix for material balance? How do you see that in 2024? And then finally, is it possible to comment a little bit around how you're thinking about first half and second half 2024, specifically for the volume growth within SR1 and SR2. Thank you.
+
+Florent Menegaux
+
+I wish we could detail month after month how 2024 is going to occur. Seen from where we are, we think H1 is probably going to be tougher than H2. But again, in our market environment right now, this is what we think so far, but we have to see. Then when we look at the loading rate improvement in -- on average, our loading rate in 2023 has been in the sort of around 70%. And you understand that at that level it's not good. So for SR2, this is our main way of improving the profitability of SR2 is by improving the loading rate. That's why we've made those restructuring announcement and that will have a positive effect and bring us back to more adequate level, which is above the 92%, 93% loading that will be made gradually over the next few years. Price mix, maybe, Yves, balance in 2024.
+
+Jose Asumendi
+
+As we mentioned, we consider that inflators knowing that it inflates there will be, of course, some elements that are going to increase and decrease, as I already mentioned, not only raw material, we have to take into account energy, transportation as well as labor costs. And in front of that, with the price and mix effect should be slightly positive at the end of 2024.
+
+Michael Jacks
+
+Thank you so much. Thank you.
+
+Operator
+
+The next question is from Monica Bosio with Intesa Sanpaulo. Please go ahead.
+
+Monica Bosio
+
+Good evening, everyone and thanks for taking my question. Most of my questions have been already answered. But I have one on the cash net impact from your restructuring actions. Can you please quantify the net cash impact from your restructuring actions on 2024? And should we expect further restructuring in 2024? The second question is on the passenger car segment. I understand that you see mild positive growth in replacement and passenger car segment. Can you please give us any color across regions? It would be appreciated. And very last is on the Beyond-tires activity with reference to the agricultural tires in the original equipment market, would it be fair to assume a double-digit decrease in 2024? Thank you very much.
+
+Florent Menegaux
+
+So regarding your first question, so the net cash impact from restructuring should be in the range somewhere between EUR200 million and EUR300 million in 2024, knowing that it's, of course, related to the announcement that we made in 2023 in Germany and in the USA. But as well, the end of the program that we have previously launched partly in France. We have a three year restructuring program that has been launched in 2021. And we'll still have some payment in 2024 for these programs. So altogether, we should be somewhere around EUR250 million for 2024 of cash out.
+
+Jose Asumendi
+
+Perfect.
+
+Yves Chapot
+
+If we look at the miles driven by region, again, this is a very complex question. Overall, I can tell you that in Europe, we are anticipating miles to be slightly negative, driven slightly negative. So it means flattish. In the U.S., the same. In all the emerging countries, the mile driven structurally will increase, but it may not play all the time to our strength because we don't -- we select where -- to which kind of vehicles we want to be on replacement. So miles driven will increase in China, structurally in Southeast Asia, and in South America, basically, overall.
+
+And the overall mix will continue to improve in passenger car, because that's the type of cars. We knew that from OE because the OE that we are defined, the vehicles that have been put in the market or define two or three years ago will be arriving in the market, and we know they are embarking very strong mix. As far as the slowdown, we expect in ag OE tires segment for the year 2024. Ag OE has been buoyant up until now, showing the good income, especially in the high power that we're in some region of the world. So we expect that to slow down, while the agricultural income reset itself at the appropriate level. So how much is -- we have some assumptions, but I don't think we detail them in this kind of call.
+
+Monica Bosio
+
+Okay. Not a problem. Thank you very time. Very kind.
+
+Operator
+
+The next question is from Sanjay Bhagwani with Citigroup. Please go ahead.
+
+Sanjay Bhagwani
+
+Hello. Thank you very much for taking my question also. I have three questions as well. And the first one is I come back on the mix. So if I understood it correctly, I think the product mix largely remains the same [indiscernible] replacement gets better. So should we expect mix to get better in 2024, that is -- it could be higher than 1.2 in 2023? And related to mix, when do we see the impact from the EVs in the replacement tire. Then this, again, start helping from 2024? That is my first question.
+
+My second question is on raw mets tailwind. So when we look at the free cash flow upbeat for 2023, a large part of this is driven by inventories, meaning that the inventories that are sitting now on the balance sheet are at lower cost. So they should hopefully help the profits next year. So how should we think of this? And finally, on the third. So if I like to just look at my first two questions. And then if I look at your guidance for segment operating income of greater than 3,500. Is that too conservative? I mean you're already doing somewhere around 3,570 this year, and even if you assume the volumes to be probably at the lower end of the guidance, aren't there enough other tailwinds? So what is basically, let's say, the key driver for the EBIT can go down in 2024 versus 23%. Those are my questions.
+
+Florent Menegaux
+
+Okay. So I will start with some of your questions and on the cash, I'll let Yves answer you. So on the guidance, we have a stance with Yves to say we want to over deliver on our promise. That's what we've been doing constantly over the past years, and that's what we'll be doing in the future. So now you may think it's conservative. When we look at our business, when we look at the market environment, it is not conservative. It's what we think is right. And what we have said is, it is in excess. And of course, in excess, we have plenty of room in excess, and I'll leave it to you scarcity to say what you think is right.
+
+Now that embark, if you remember, our guidance last year was EUR3.2 billion. And we have already put in our basket, EUR300 million improvement in operating results in one year. So you may say it's conservative, but we say it's a strong commitment. Now when we look at product mix better in 2024, 2023 has been very strong on mix. 2024, we’ll see we have taken assumptions that were close to what we have seen in 2023 and on average over the past five years. And that's what we have in our plan.
+
+Now on EV, there is a lot of questions. I need to remember you that all our tires are EV ready, which means that all our tires can be fitted on every type of vehicles, whether EV or not EV. So that doesn't change what is happening on the EV does not change our outlook for 2024. Of course, if the more EVs sold, the more opportunities we have on top of what we do. But as we have made the investments in the past decades, we are insensitive to the portion of EV. It's maybe a lesser opportunity that we can see if EV is less on the replacement. So now what you say is -- it is true that EV, they consume more tires on replacement and the more EV that goes into the market, the more replacement opportunities that will create that we have models that are simulating that, and that's what we have embedded into our forecast at 2024.
+
+And Yves on the cash.
+
+Yves Chapot
+
+On the cash, we had in 2023, don't forget that we had a EUR1 billion effect coming from the working capital. Part of it is coming from the prices. Part of it was coming from better monitoring of our sales and operation process, which led us to have over the year, constantly lower inventory than in 2022 -- of course, we will continue to -- on this program to better manage our inventories. But the progress that we have done in inventories, it's a one-shot effect when the EBITDA will be recurring. There was also, let's say, partial effect in our free cash flow coming from the JV contribution, which was very positive. And when you look in the previous year, it was rather negative or close to zero. We are still expecting some contribution from our North American JV distribution. But overall, will not generate EUR200 million of additional cash coming from our joint ventures in 2024. So that's why we have also to take that into consideration when you project our 2024 free cash flow. And generating more than EUR1.5 billion should be, let's say, the norm.
+
+Here again, as we don't guide anymore on the structural free cash flow, but on the posted free cash flow. Of course, we will over the year indicate you what will be the effect on prices on our free cash flow, because it heavily impact our working capital.
+
+Florent Menegaux
+
+And as I was listening to you, Yves. Maybe just a complement to your question about the guidance too conservative or not. Remember that we also have in 2024, the index contract to take into consideration.
+
+Operator
+
+The next is from Steve Fernandes with Societe Generale. Please go ahead.
+
+Steve Fernandes
+
+Hi. Thaks for taking my question. Could you talk about the level of competition in the U.S. market, especially since the reduction of import duties on passenger cars from Thailand.
+
+Florent Menegaux
+
+So first, the tire industry is a very intense competitive market. So in every geographies around the world, the U.S. is one, but it's true as well in South America, Europe, wherever we go. Now it is true that sometimes when there is a fluctuation in the duties, it has an impact. But more -- so we don't see any structural movement in the tier structure of the market in North America. So at this stage, we don't see this as being a major effect -- has having a major effect in the market. On top of that, you need to remember that Michelin operates in the top part of the Tier 1. And that's somewhat -- we are very -- we are far less sensitive to this kind of issue than others.
+
+Steve Fernandes
+
+Thanks for that. And if I could just follow up with one about [Euro 7] (ph). I think there's now officially guidelines for how tire abrasion will be measured. When do you think you'll be in a position to kind of find out the kind of repercussions from Euro 7 and kind of how confident do you think you are today to face that new regulation. Thank you.
+
+Florent Menegaux
+
+Yes. So you're right. Euro 7 package, especially the tire abrasion portion has been voted. So that's the good news. Now before it has an impact in the market, it's going to take a few years because every country now has to put it in their local legislation. So it will take some time before it impacts. But it's, for us, a good opportunity to remind everyone that Michelin has structurally a very strong advantage in terms of tire abrasion. We are by far the better in that domain. And the number of particularly emitted by our tires per mile is by far the lowest, to any of our competitors. So that's why we are welcoming this. The effect, I think, will not come before 2025, 2026 before we can see the effect of this.
+
+Steve Fernandes
+
+That’s great. Thank you very much.
+
+Operator
+
+The next question is from Ross McDonald with Morgan Stanley. Please go ahead.
+
+Ross MacDonald
+
+Hi. Good evening. It's Ross MacDonald from Morgan Stanley. Three questions, please. Firstly, on the EUR1 billion buyback program. Just to help me understand this program in a bit more detail. You said this could be up to EUR1 billion between 2024 and 2026, what conditions do we need to see for the buyback to run at full speed of EUR80 million per quarter, i.e., how much should I expect in 2024 in euro terms, please?
+
+And then secondly, the cost of debt is relatively high at this time. How should we think about this buyback in the context of your non-tire M&A aspirations? Should we look at this as maybe signaling some slowdown in your plans to do further acquisitions on the non-tire side over the next 12 months?
+
+And then final question just on the Red Sea impact. If I recall correctly, you have a May-to-May annual marine shipping contract. What is the impact to the group? Is it mainly on the delays to products getting to market at this point, or are you facing some surcharges from shipping companies also? Thank you.
+
+Florent Menegaux
+
+So that the buyback signal. There's no signal, apart from the fact that Michelin has a strong cash generation. And therefore, it's logical. It's a good investment to -- when we look at [indiscernible] too quickly at this stage where our borrowings are cheap in the balance sheet. The best way to invest money at this stage is to do it. Now as far -- is to do these buybacks. As far as the structure, of course, there is -- in this buyback, it includes all the buybacks we do every year just to avoid the dilution due to the share we are granting to our employees. So that is embedded into that.
+
+Now we have created this up to EUR1 billion because, of course, over three years, because we just want to make sure that we do these buybacks in the best market conditions available. So we will give a mandate to a third party that will be there to optimize these buying backs and to take the market opportunities. So that's why it is not set per quarter. It says...
+
+Yves Chapot
+
+This is communicated every time with a bank that will mandate will communicate on the period and the amount of the buyback.
+
+Florent Menegaux
+
+Now as far as M&A, our strategy is still valid. 2030 is still seven years away, and we have very strong ambitions and our M&A, there is no pause. It is just the realization. We had a very strong cash flow generation over the past years. So we can do the M&A we need to do. Our balance sheet is strong. We can do our investments, and we can pay our employees. So Michelin is strong. That's why we would do it this way.
+
+Yves Chapot
+
+On the Red Sea situation. So first, we have to take into account that there is around 4% of our overall product flows which we are going through the canal, the Suez Canal, both if you take into account raw materials and finished products. It was mostly raw materials that were shipped from Asia to Europe or some finished product, by the way, in both direction. So for the time being, the impact that we are seeing is mostly an increase in delay for the containers that have to circumnavigate Africa in order to reach Europe. There will be probably punctually some cost increase. But today, it's not at the magnitude that justify any specific communication. So it's taken in account in our 2024 assumptions for the guidance.
+
+And of course, we have, in some case, been doing some preventive production reduction in order to -- in Europe in order to do not be force on the constraint to stop production because of the -- of a lack of some raw materials. So that was mainly the effect of this crisis that is, by the way, very well managed by our teams.
+
+Florent Menegaux
+
+Thank you very much. This was our last question. So thank you for attending the call. Thank you for your interest in Michelin. And Yves and I would like to take the opportunity to thank all the Michelin people that are listening to us tonight for all what they are doing and because Michelin's performance is your performance. So thank you very much, and see you soon.
+
+Yves Chapot
