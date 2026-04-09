@@ -1162,7 +1162,7 @@ st.markdown(
     "<div class='hero-content'>"
     "<div class='eyebrow'>Wheel Street</div>"
     "<h1 class='hero-title'>Does Michelin have a strong competitive moat?</h1>"
-    "<div class='hero-deck'>Goal: quantify competitive edge with evidence from income statement strength, stock performance, and patent portfolio depth across the same global peer set.</div>"
+    "<div class='hero-deck'>Goal: test whether Michelin's edge is truly durable by examining the signals a strong business should leave behind: superior margins, disciplined capital allocation, shareholder returns, and innovation versus the same global peer set.</div>"
     "</div>"
     "</div>",
     unsafe_allow_html=True,
