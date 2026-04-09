@@ -1,8 +1,25 @@
 services:
   - type: web
-    name: wheel-street
+    name: wheel-street-api
     runtime: docker
+    dockerfilePath: ./Dockerfile.api
     plan: free
     envVars:
       - key: OPENAI_API_KEY
         sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+
+  - type: web
+    name: wheel-street
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANALYST_API_BASE_URL
+        fromService:
+          type: web
+          name: wheel-street-api
+          property: host

@@ -73,6 +73,25 @@ A LangGraph-powered conversational agent that answers questions about the tire i
 - `get_stock_performance` — Price performance over custom periods
 - `get_company_overview` — Company profile with financial highlights
 
+### API Service (New)
+The project now includes a FastAPI backend service for hosted agent/data access:
+
+- `GET /health` — service health check
+- `GET /data/coverage` — dataset coverage summary
+- `POST /query/financial-sql` — safe DuckDB SQL queries
+- `POST /search/transcripts` — transcript keyword search
+- `POST /search/patents` — patent summary metadata search
+- `POST /qa` — LangGraph-backed question answering
+
+`POST /qa` returns structured fields:
+- `answer`: final response text
+- `citations`: extracted transcript citations found in the final answer
+- `tool_trace`: compact list of tool calls and completion previews
+- `model`: model identifier used for the response
+
+When `ANALYST_API_BASE_URL` is set, the Streamlit chat panel uses the remote API for Q&A.
+If not set, Streamlit falls back to local in-process LangGraph execution.
+
 ## Why This Project Is Easy To Review
 
 - The project is organized around one clear business question.
@@ -157,6 +176,21 @@ set OPENAI_API_KEY=your-key-here  # Windows
 streamlit run app.py
 ```
 
+### Option 2b: Run API + UI locally
+
+Terminal 1 (API):
+
+```bash
+uvicorn api_service.main:app --host 0.0.0.0 --port 8000
+```
+
+Terminal 2 (Streamlit with remote agent mode):
+
+```bash
+set ANALYST_API_BASE_URL=http://localhost:8000
+streamlit run app.py
+```
+
 ### Option 3: Re-download data (optional)
 
 If you want to refresh the financial data:
@@ -177,14 +211,21 @@ raw text tables (news/transcripts), company profiles, and summary tables.
 
 ## Deployment (Render)
 
-This app is configured for [Render](https://render.com) free tier:
+This repo is configured for [Render](https://render.com) with two Docker web services:
+
+1. `wheel-street-api` (FastAPI backend)
+2. `wheel-street` (Streamlit frontend)
+
+`wheel-street` receives `ANALYST_API_BASE_URL` from the API service host in `render.yaml`.
+
+Basic steps:
 
 1. Push to GitHub
-2. Connect repo on Render dashboard → New Web Service → Docker
-3. Set environment variable: `OPENAI_API_KEY`
-4. Deploy
+2. In Render: New Blueprint Instance, point to this repo
+3. Set `OPENAI_API_KEY`
+4. Deploy both services
 
-The `render.yaml` file now lives at the repo root, so Render can use it directly.
+The `render.yaml` file at repo root defines both services.
 
 ## Design Decisions
 

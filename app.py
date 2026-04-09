@@ -2,12 +2,15 @@ import base64
 import os
 import traceback
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import requests
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
+from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.messages import AIMessage, HumanMessage
 
 from src.data_loader import COMPANY_NAMES
@@ -157,8 +160,89 @@ h1, h2, h3, h4 {
     color: #f0f0f0 !important;
 }
 
+.chat-panel [data-testid="stMarkdownContainer"],
+.chat-panel [data-testid="stChatMessage"] p,
+.chat-panel [data-testid="stChatMessage"] li,
+.chat-panel [data-testid="stChatMessage"] div {
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+}
+
 .chat-panel [data-testid="stChatMessage"] {
     background: transparent;
+}
+
+/* Chat input field and placeholder on dark background */
+.chat-panel [data-testid="stChatInput"] textarea,
+.chat-panel [data-testid="stChatInput"] input {
+    color: #f4f4f4 !important;
+    background: #191919 !important;
+    border: 1px solid #3a3a3a !important;
+}
+
+.chat-panel [data-testid="stChatInput"] textarea::placeholder,
+.chat-panel [data-testid="stChatInput"] input::placeholder {
+    color: #a6a6a6 !important;
+}
+
+/* Starter prompt button contrast */
+.chat-panel [data-testid="stButton"] button,
+.chat-panel [data-testid="stButton"] button[kind="secondary"] {
+    background: #2f2f2f !important;
+    border: 1px solid #4a4a4a !important;
+    color: #f0f0f0 !important;
+    -webkit-text-fill-color: #f0f0f0 !important;
+    opacity: 1 !important;
+}
+
+.chat-panel [data-testid="stButton"] button *,
+.chat-panel [data-testid="stButton"] button span,
+.chat-panel [data-testid="stButton"] button p {
+    color: #f0f0f0 !important;
+    -webkit-text-fill-color: #f0f0f0 !important;
+}
+
+.chat-panel [data-testid="stButton"] button:hover,
+.chat-panel [data-testid="stButton"] button[kind="secondary"]:hover {
+    background: #ffffff !important;
+    border-color: #ffffff !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+}
+
+.chat-panel [data-testid="stButton"] button:hover *,
+.chat-panel [data-testid="stButton"] button:hover span,
+.chat-panel [data-testid="stButton"] button:hover p {
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+}
+
+/* Force styling specifically for starter prompt buttons in sidebar */
+section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button {
+    background-color: #2f2f2f !important;
+    background-image: none !important;
+    border: 1px solid #4a4a4a !important;
+    color: #f0f0f0 !important;
+    -webkit-text-fill-color: #f0f0f0 !important;
+    opacity: 1 !important;
+}
+
+section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button * {
+    color: #f0f0f0 !important;
+    -webkit-text-fill-color: #f0f0f0 !important;
+}
+
+section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button:hover {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border-color: #ffffff !important;
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
+}
+
+section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button:hover * {
+    color: #111111 !important;
+    -webkit-text-fill-color: #111111 !important;
 }
 
 /* Thin dark scrollbar */
@@ -362,19 +446,19 @@ section[data-testid="stSidebar"] {
 }
 
 section[data-testid="stSidebar"] > div {
-    padding-top: 1.5rem;
+    padding-top: 0.4rem;
 }
 
 /* Sidebar label / header */
 section[data-testid="stSidebar"]::before {
-    content: "\2B24  Analyst";
+    content: "Analyst";
     display: block;
     font-family: 'IBM Plex Sans', sans-serif;
     font-size: 0.78rem;
     font-weight: 600;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.38);
+    color: #ffffff;
     padding: 0.9rem 1.2rem 0.4rem;
 }
 
@@ -1303,7 +1387,91 @@ def get_openai_key_from_env_file() -> str:
     return ""
 
 
+def _normalize_api_base_url(raw_url: str) -> str:
+    cleaned = (raw_url or "").strip().rstrip("/")
+    if not cleaned:
+        return ""
+    if cleaned.startswith("http://") or cleaned.startswith("https://"):
+        return cleaned
+    return f"https://{cleaned}"
+
+
+def _append_chat_message(role: str, text: str, meta: dict | None = None) -> None:
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+    st.session_state.chat_history.append((role, text, meta or {}))
+
+
+def _iter_chat_history() -> list[tuple[str, str, dict]]:
+    normalized: list[tuple[str, str, dict]] = []
+    for item in st.session_state.get("chat_history", []):
+        if isinstance(item, tuple) and len(item) >= 2:
+            role = item[0]
+            text = item[1]
+            meta = item[2] if len(item) > 2 and isinstance(item[2], dict) else {}
+            normalized.append((role, text, meta))
+    return normalized
+
+
+def _render_remote_evidence(meta: dict) -> None:
+    citations = meta.get("citations") or []
+    tool_trace = meta.get("tool_trace") or []
+    model = meta.get("model")
+
+    if not citations and not tool_trace and not model:
+        return
+
+    with st.expander("Evidence", expanded=False):
+        if model:
+            st.caption(f"Model: {model}")
+
+        if citations:
+            st.markdown("**Citations**")
+            for citation in citations:
+                st.markdown(f"- {citation}")
+
+        if tool_trace:
+            st.markdown("**Tool Trace**")
+            for step in tool_trace[:8]:
+                tool_name = step.get("tool", "tool")
+                status = step.get("status", "unknown")
+                st.markdown(f"- {tool_name} ({status})")
+
+
+def _remote_qa(api_base_url: str, history: list[tuple[str, str, dict]]) -> tuple[str, dict]:
+    payload_messages = [
+        {"role": role, "content": text}
+        for role, text, _meta in history
+        if role in {"user", "assistant"} and text
+    ]
+    resp = requests.post(
+        f"{api_base_url}/qa",
+        json={"messages": payload_messages},
+        timeout=240,
+    )
+    resp.raise_for_status()
+    body = resp.json()
+    answer = body.get("answer", "")
+    if not answer:
+        raise RuntimeError("API returned an empty answer.")
+
+    meta = {
+        "citations": body.get("citations") or [],
+        "tool_trace": body.get("tool_trace") or [],
+        "model": body.get("model") or "",
+    }
+    return answer, meta
+
+
 def init_agent() -> None:
+    remote_base = _normalize_api_base_url(os.environ.get("ANALYST_API_BASE_URL", ""))
+    if remote_base:
+        st.session_state.agent_mode = "remote"
+        st.session_state.analyst_api_base_url = remote_base
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+        return
+
     api_key = os.environ.get("OPENAI_API_KEY", "")
     if not api_key:
         try:
@@ -1315,33 +1483,92 @@ def init_agent() -> None:
     if not api_key:
         return
     os.environ["OPENAI_API_KEY"] = api_key
+    st.session_state.agent_mode = "local"
     if "agent" not in st.session_state:
         model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
         st.session_state.agent = build_graph(model_name=model)
-    # chat_history: display-only list of (role, text) tuples — never passed raw to agent.
+    # chat_history stores (role, text, meta) tuples for rendering and remote evidence panels.
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
 
-def render_chatbot() -> None:
+class StreamlitProgressCallback(BaseCallbackHandler):
+    def __init__(self, status_box: Any):
+        self.status_box = status_box
+        self.events: list[str] = []
+        self.tool_labels = {
+            "get_financials": "Reading income statement and cash flow data",
+            "get_ratios": "Reading profitability and return ratios",
+            "search_transcripts": "Searching earnings call transcripts",
+            "search_patent_filings": "Searching patent filing summaries",
+            "search_news": "Searching company news archive",
+            "get_stock_performance": "Reviewing stock performance history",
+            "get_company_overview": "Loading company overview",
+            "get_data_coverage": "Checking local data coverage",
+            "query_financial_database": "Running DuckDB financial query",
+        }
+
+    def _push(self, msg: str) -> None:
+        self.events.append(msg)
+        recent = self.events[-8:]
+        self.status_box.markdown("\n".join(f"- {line}" for line in recent))
+
+    def on_chain_start(self, serialized: dict[str, Any], inputs: dict[str, Any], **kwargs: Any) -> None:
+        self._push("Planning answer and selecting tools")
+
+    def on_chat_model_start(self, serialized: dict[str, Any], messages: list[list[Any]], **kwargs: Any) -> None:
+        self._push("Reasoning with model")
+
+    def on_tool_start(self, serialized: dict[str, Any], input_str: str, **kwargs: Any) -> None:
+        tool_name = serialized.get("name", "tool")
+        label = self.tool_labels.get(tool_name, f"Running tool: {tool_name}")
+        self._push(label)
+
+    def on_tool_end(self, output: Any, **kwargs: Any) -> None:
+        self._push("Tool completed")
+
+    def on_tool_error(self, error: BaseException, **kwargs: Any) -> None:
+        self._push(f"Tool error: {type(error).__name__}")
+
+    def on_chain_end(self, outputs: dict[str, Any], **kwargs: Any) -> None:
+        self._push("Workflow finished")
+
+
+def _render_chatbot_impl() -> None:
     init_agent()
+
+    if "chat_busy" not in st.session_state:
+        st.session_state.chat_busy = False
 
     # Outer wrapper styled via .chat-panel CSS selector
     wrapper = st.container()
     with wrapper:
-        st.markdown("#### Financial Analyst Agent")
         st.caption(
-            "Ask focused questions while reviewing the figures on the left. "
-            "The agent can pull financials, ratios, cash flow, news, transcripts, "
-            "and DuckDB-backed comparisons."
+            "Ask questions about Michelin and competitors' income statements, earnings call transcripts, and patents."
         )
 
-        if "agent" not in st.session_state:
+        is_remote = st.session_state.get("agent_mode") == "remote"
+        if not is_remote and "agent" not in st.session_state:
             st.info("OpenAI credentials are not available — chat is offline.")
             return
 
-        # Suggestion buttons only before the first question
-        if not st.session_state.chat_history:
+        # ── Fixed-height scrollable message area ──
+        history = _iter_chat_history()
+        has_history = bool(history)
+        chat_box = st.container(height=700 if (has_history or st.session_state.chat_busy) else 380, border=True)
+        with chat_box:
+            if has_history:
+                for role, text, meta in history:
+                    with st.chat_message(role):
+                        st.markdown(text)
+                        if role == "assistant":
+                            _render_remote_evidence(meta)
+            else:
+                st.caption("Start with a question and this panel will expand into a scrollable conversation view.")
+
+        pending_question = st.session_state.pop("pending_question", None) if "pending_question" in st.session_state else None
+
+        if not history and not st.session_state.chat_busy and pending_question is None:
             suggestions = [
                 "Does Michelin structurally outperform peers on margins?",
                 "What explains Michelin's revenue growth versus Goodyear and Bridgestone?",
@@ -1355,56 +1582,65 @@ def render_chatbot() -> None:
                 with prompt_cols[idx % 2]:
                     if st.button(suggestion, key=f"single_page_suggestion_{idx}", width="stretch"):
                         st.session_state.pending_question = suggestion
-
-        # ── Fixed-height scrollable message area ──
-        has_history = bool(st.session_state.chat_history)
-        chat_box = st.container(height=560 if has_history else 180, border=True)
-        with chat_box:
-            if has_history:
-                for role, text in st.session_state.chat_history:
-                    with st.chat_message(role):
-                        st.markdown(text)
-            else:
-                st.caption("Start with a question and this panel will expand into a scrollable conversation view.")
+                        st.rerun()
 
         # ── Input bar (always at a fixed position below the container) ──
-        user_input = st.chat_input("Ask about Michelin versus peers")
-        if "pending_question" in st.session_state:
-            user_input = st.session_state.pending_question
-            del st.session_state.pending_question
+        user_input = pending_question or st.chat_input("Ask about Michelin versus peers")
 
         if user_input:
-            st.session_state.chat_history.append(("user", user_input))
+            st.session_state.chat_busy = True
+            _append_chat_message("user", user_input)
 
             with chat_box:
                 with st.chat_message("user"):
                     st.markdown(user_input)
 
                 with st.chat_message("assistant"):
-                    with st.spinner("Researching"):
-                        try:
+                    try:
+                        if is_remote:
+                            api_base = st.session_state.get("analyst_api_base_url", "")
+                            response_text, meta = _remote_qa(api_base, _iter_chat_history())
+                            st.markdown(response_text)
+                            _render_remote_evidence(meta)
+                            _append_chat_message("assistant", response_text, meta)
+                        else:
                             clean_messages = []
-                            for role, text in st.session_state.chat_history[:-1]:
+                            for role, text, _meta in _iter_chat_history()[:-1]:
                                 if role == "user":
                                     clean_messages.append(HumanMessage(content=text))
                                 else:
                                     clean_messages.append(AIMessage(content=text))
                             clean_messages.append(HumanMessage(content=user_input))
 
-                            result = st.session_state.agent.invoke({"messages": clean_messages})
+                            progress = st.status("LangChain progress", expanded=True)
+                            callback = StreamlitProgressCallback(progress)
+                            result = st.session_state.agent.invoke(
+                                {"messages": clean_messages},
+                                config={"callbacks": [callback]},
+                            )
+                            progress.update(label="LangChain complete", state="complete", expanded=False)
+
                             response = result["messages"][-1]
                             st.markdown(response.content)
-                            st.session_state.chat_history.append(("assistant", response.content))
-                        except Exception as exc:
-                            tb = traceback.format_exc()
-                            print(tb)
-                            short = str(exc) or type(exc).__name__
-                            error_msg = f"The analyst hit an error: {short}"
-                            with st.expander("Error detail"):
-                                st.code(tb)
-                            st.error(error_msg)
-                            st.session_state.chat_history.append(("assistant", error_msg))
+                            _append_chat_message("assistant", response.content)
+                    except Exception as exc:
+                        tb = traceback.format_exc()
+                        print(tb)
+                        short = str(exc) or type(exc).__name__
+                        error_msg = f"The analyst hit an error: {short}"
+                        with st.expander("Error detail"):
+                            st.code(tb)
+                        st.error(error_msg)
+                        _append_chat_message("assistant", error_msg)
+                    finally:
+                        st.session_state.chat_busy = False
             st.rerun()
+
+
+if hasattr(st, "fragment"):
+    render_chatbot = st.fragment(_render_chatbot_impl)
+else:
+    render_chatbot = _render_chatbot_impl
 
 
 income, margin_data, stock_growth_data, dividend_growth_data, ratios_data, stock_prices_daily, latest_year = prepare_competitive_frames()
@@ -1421,7 +1657,6 @@ st.markdown(get_hero_bg_css(), unsafe_allow_html=True)
 
 # ── Right-side chat sidebar ──────────────────────────────────────────────────
 with st.sidebar:
-    st.caption("Analyst Panel")
     st.markdown("<div class='chat-panel'>", unsafe_allow_html=True)
     render_chatbot()
     st.markdown("</div>", unsafe_allow_html=True)

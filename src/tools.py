@@ -17,6 +17,7 @@ from src.data_loader import (
     load_profiles,
     load_all_transcripts,
     load_all_news,
+    load_ai_patent_summaries,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -488,13 +489,103 @@ def query_financial_database(sql_query: str) -> str:
         conn.close()
 
 
+@tool
+def search_patent_filings(
+    query: str,
+    company: str = "all",
+    years: int = 0,
+    max_results: int = 20,
+    ai_only: bool = False,
+) -> str:
+    """Search summarized patent filings for technology themes and innovation signals.
+
+    Args:
+        query: Keywords to search across invention title, AI type, category, and summary.
+        company: Ticker/company name, or "all".
+        years: Rolling filing-year window. 0 means full history.
+        max_results: Maximum formatted hits returned.
+        ai_only: If true, keep only patents classified as AI-driven.
+    """
+    df = load_ai_patent_summaries()
+    if df.empty:
+        return "No patent summary data available. Run data/transform/summarize_uspto_patents_with_ollama.py first."
+
+    work = df.copy()
+    work["filing_date"] = pd.to_datetime(work.get("filing_date"), errors="coerce")
+
+    if company.lower() != "all":
+        ticker = _resolve_ticker(company)
+        if not ticker:
+            return f"Company '{company}' not recognized."
+        company_name = COMPANY_NAMES.get(ticker, ticker)
+        work = work[(work.get("ticker") == ticker) | (work.get("company") == company_name)]
+
+    if years > 0:
+        cutoff_year = pd.Timestamp.utcnow().year - years + 1
+        work = work[work["filing_date"].dt.year >= cutoff_year]
+
+    if ai_only and "ai_driven" in work.columns:
+        work = work[work["ai_driven"] == True]
+
+    if query.strip():
+        terms = [t.strip().lower() for t in query.split() if t.strip()]
+        search_blob = (
+            work.get("invention_title", "").fillna("").astype(str)
+            + " "
+            + work.get("short_summary", "").fillna("").astype(str)
+            + " "
+            + work.get("patent_category", "").fillna("").astype(str)
+            + " "
+            + work.get("ai_type", "").fillna("").astype(str)
+        ).str.lower()
+        mask = pd.Series(True, index=work.index)
+        for term in terms:
+            mask = mask & search_blob.str.contains(term, regex=False)
+        work = work[mask]
+
+    if work.empty:
+        return f"No patent filings found matching '{query}'."
+
+    if "confidence" in work.columns:
+        work["confidence"] = pd.to_numeric(work["confidence"], errors="coerce").fillna(0.0)
+    else:
+        work["confidence"] = 0.0
+
+    work = work.sort_values(["filing_date", "confidence"], ascending=[False, False])
+    rows = work.head(max_results)
+
+    lines = [f"Returned {len(rows)} patent filing summaries (of {len(work)} matches)."]
+    for _, row in rows.iterrows():
+        company_name = row.get("company") or COMPANY_NAMES.get(str(row.get("ticker", "")), str(row.get("ticker", "")))
+        filing_date = "unknown date"
+        if pd.notna(row.get("filing_date")):
+            filing_date = str(row.get("filing_date"))[:10]
+        app_num = str(row.get("application_number", "")).strip() or "unknown application"
+        title = str(row.get("invention_title", "")).strip() or "Untitled invention"
+        category = str(row.get("patent_category", "other")).strip() or "other"
+        ai_type = str(row.get("ai_type", "none")).strip() or "none"
+        confidence = float(row.get("confidence", 0.0) or 0.0)
+        summary = str(row.get("short_summary", "")).strip()
+        lines.append(
+            f"Source: [Patent: {company_name}, app {app_num}, filed {filing_date}]\n"
+            f"Title: {title}\n"
+            f"Category: {category}; AI Type: {ai_type}; Confidence: {confidence:.2f}\n"
+            f"Summary: {summary}"
+        )
+
+    return "\n\n".join(lines)
+
+
 ALL_TOOLS = [
     get_financials,
     get_ratios,
     search_transcripts,
+    search_patent_filings,
     search_news,
     get_stock_performance,
     get_company_overview,
     get_data_coverage,
     query_financial_database,
 ]
+
+TOOL_REGISTRY = {tool.name: tool for tool in ALL_TOOLS}
