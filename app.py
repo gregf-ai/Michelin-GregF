@@ -17,7 +17,7 @@ st.set_page_config(
     page_title="Wheel Street",
     page_icon="●",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 ARTICLE_CSS = """
@@ -37,8 +37,11 @@ ARTICLE_CSS = """
     background: linear-gradient(180deg, #ffffff 0%, #f6f6f6 100%);
 }
 
-[data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stSidebar"] {
-    display: none;
+/* Keep header visible so Streamlit's native sidebar reopen control remains available */
+[data-testid="stHeader"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 [data-testid="block-container"] {
@@ -352,6 +355,41 @@ button[data-baseweb="tab"][aria-selected="true"] {
     padding: 1rem;
     margin-bottom: 1rem;
 }
+
+/* ── Streamlit default sidebar (dark themed) ── */
+section[data-testid="stSidebar"] {
+    background: #0f0f0f !important;
+}
+
+section[data-testid="stSidebar"] > div {
+    padding-top: 1.5rem;
+}
+
+/* Sidebar label / header */
+section[data-testid="stSidebar"]::before {
+    content: "\2B24  Analyst";
+    display: block;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.38);
+    padding: 0.9rem 1.2rem 0.4rem;
+}
+
+/* Title & text inside sidebar */
+section[data-testid="stSidebar"] h4,
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] span,
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {
+    color: #f0f0f0 !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stChatMessage"] {
+    background: transparent;
+}
 </style>
 """
 
@@ -421,6 +459,44 @@ def prepare_competitive_frames() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFra
 
     latest_year = int(margin["fiscal_year"].max()) if not margin.empty else 0
     return income, margin, year_end_prices, cash_flows, ratios, stock_prices, latest_year
+
+
+@st.cache_data
+def prepare_patent_frames() -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Build yearly patent count frames for all companies."""
+    from src.data_loader import load_patent_filings, load_ai_patent_summaries
+
+    filings = load_patent_filings()
+    if not filings.empty:
+        yearly_raw = (
+            filings.dropna(subset=["filing_year"])
+            .groupby(["company", "filing_year"], as_index=False)
+            .size()
+            .rename(columns={"size": "patent_count"})
+        )
+        yearly_raw["fiscal_year"] = yearly_raw["filing_year"].astype(int)
+        yearly_raw = yearly_raw.drop(columns=["filing_year"])
+    else:
+        yearly_raw = pd.DataFrame(columns=["company", "fiscal_year", "patent_count"])
+
+    ai_df = load_ai_patent_summaries()
+    if not ai_df.empty:
+        ai_driven = ai_df[ai_df["ai_driven"] == True]  # noqa: E712
+        if not ai_driven.empty:
+            ai_yearly_raw = (
+                ai_driven.dropna(subset=["filing_year"])
+                .groupby(["company", "filing_year"], as_index=False)
+                .size()
+                .rename(columns={"size": "ai_patent_count"})
+            )
+            ai_yearly_raw["fiscal_year"] = ai_yearly_raw["filing_year"].astype(int)
+            ai_yearly_raw = ai_yearly_raw.drop(columns=["filing_year"])
+        else:
+            ai_yearly_raw = pd.DataFrame(columns=["company", "fiscal_year", "ai_patent_count"])
+    else:
+        ai_yearly_raw = pd.DataFrame(columns=["company", "fiscal_year", "ai_patent_count"])
+
+    return yearly_raw, ai_yearly_raw
 
 
 def latest_metric_frame(df: pd.DataFrame, metric: str) -> pd.DataFrame:
@@ -510,7 +586,7 @@ def render_overview_rankings(metric_specs: list[tuple[str, str, pd.DataFrame, st
     st.markdown(
         "<div class='overview-panel'>"
         "<div class='overview-head'>Michelin Competitive Scorecard</div>"
-        "<div class='overview-subhead'>Sorted by Michelin rank (best to worst). Basis: 10-year median.</div>"
+        "<div class='overview-subhead'>Sorted by Michelin rank among 5 peers (best to worst). Basis: 10-year median.</div>"
         + "".join(lines)
         + "</div>",
         unsafe_allow_html=True,
@@ -789,6 +865,103 @@ def build_company_history_bar(df: pd.DataFrame, metric: str, company: str) -> go
     return fig
 
 
+def build_count_rank_bar(ranked: pd.DataFrame, metric: str) -> go.Figure:
+    """Horizontal bar chart for count-based metrics (patents, not percentages)."""
+    companies = ranked["company"].tolist()
+    tick_text = [f"<b>{c}</b>" if c == "Michelin" else c for c in companies]
+    fig = go.Figure(
+        go.Bar(
+            x=ranked[metric],
+            y=ranked["company"],
+            orientation="h",
+            marker=dict(color="#111111", line=dict(color="#111111", width=0)),
+            selected=dict(marker=dict(color="#aaaaaa")),
+            unselected=dict(marker=dict(color="#111111")),
+            customdata=ranked[["company"]],
+            text=[f"{int(v):,}" for v in ranked[metric]],
+            textposition="outside",
+            textfont=dict(size=15, color="#111111"),
+            cliponaxis=False,
+            hovertemplate="%{y}: %{x:,.0f}<extra></extra>",
+            showlegend=False,
+        )
+    )
+    fig.update_layout(
+        height=420,
+        margin=dict(l=0, r=70, t=8, b=8),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=False,
+        barmode="overlay",
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False, title="", fixedrange=True),
+        yaxis=dict(
+            showgrid=False, zeroline=False, showticklabels=True, title="",
+            tickmode="array",
+            tickvals=companies,
+            ticktext=tick_text,
+            tickfont=dict(size=17, color="#111111"),
+            autorange="reversed",
+            fixedrange=True,
+        ),
+        dragmode=False,
+    )
+    return fig
+
+
+def build_patent_trend(df: pd.DataFrame, metric: str, companies: list[str]) -> go.Figure:
+    """Multi-line trend chart of annual patent counts for the given companies."""
+    fig = go.Figure()
+    for idx, company in enumerate(companies):
+        cdf = df[df["company"] == company].dropna(subset=[metric]).sort_values("fiscal_year")
+        if cdf.empty:
+            continue
+        fig.add_trace(go.Scatter(
+            x=cdf["fiscal_year"], y=cdf[metric],
+            mode="lines+markers",
+            name=company,
+            line=dict(color=GRAYSCALE[idx], width=2.5),
+            marker=dict(size=6, color=GRAYSCALE[idx]),
+            hovertemplate=f"{company}<br>%{{x}}: %{{y:,.0f}}<extra></extra>",
+        ))
+    fig.update_layout(
+        height=420,
+        margin=dict(l=8, r=12, t=8, b=8),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        legend=dict(x=1.01, y=0.5, xanchor="left", yanchor="middle", bgcolor="rgba(0,0,0,0)", borderwidth=0, font=dict(size=16)),
+        xaxis=dict(showgrid=False, title="", tickfont=dict(size=15, color="#666666")),
+        yaxis=dict(showgrid=True, gridcolor="#ececec", zeroline=False, showticklabels=False, title=""),
+    )
+    return fig
+
+
+def build_company_patent_history(df: pd.DataFrame, metric: str, company: str) -> go.Figure:
+    """Bar chart of annual patent count for a single company."""
+    history = df[df["company"] == company].dropna(subset=[metric]).sort_values("fiscal_year")
+    fig = go.Figure(
+        go.Bar(
+            x=history["fiscal_year"].astype(str),
+            y=history[metric],
+            marker=dict(color="#555555", line=dict(color="#111111", width=0)),
+            text=[f"{int(v):,}" for v in history[metric]],
+            textposition="outside",
+            textfont=dict(size=15, color="#111111"),
+            cliponaxis=False,
+            hovertemplate=f"{company}<br>%{{x}}: %{{y:,.0f}}<extra></extra>",
+        )
+    )
+    fig.update_layout(
+        height=420,
+        margin=dict(l=8, r=12, t=18, b=8),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=False,
+        xaxis=dict(showgrid=False, title="", tickfont=dict(size=15, color="#666666"), type="category"),
+        yaxis=dict(showgrid=True, gridcolor="#ececec", zeroline=False, showticklabels=False, title=""),
+    )
+    return fig
+
+
 def build_company_underlying_bar(df: pd.DataFrame, value_col: str, company: str, hover_name: str) -> go.Figure:
     history = df[df["company"] == company].dropna(subset=[value_col]).sort_values("fiscal_year")
     y_millions = history[value_col] / 1_000_000
@@ -1032,6 +1205,92 @@ def render_metric_tab(title: str, note: str, df: pd.DataFrame, metric: str) -> N
             st.plotly_chart(build_sparkline_stack(df, metric, sparkline_companies), width="stretch", config={"displayModeBar": False, "scrollZoom": False})
 
 
+def render_patent_tab(
+    yearly_df: pd.DataFrame,
+    metric: str,
+    title: str,
+    note: str,
+    tab_key: str,
+) -> None:
+    """Render a patent analytics tab following the same structure as financial metric tabs."""
+    if yearly_df.empty:
+        st.info("Patent filing data is not yet available.")
+        return
+
+    # 10-year window based on max year in dataset
+    max_yr = int(yearly_df["fiscal_year"].max())
+    min_yr = max_yr - 9
+    df_10yr = yearly_df[yearly_df["fiscal_year"] >= min_yr].copy()
+
+    ranked = median_metric_frame(df_10yr, metric)
+
+    if ranked.empty:
+        st.info("Insufficient data to rank companies.")
+        return
+
+    top2 = [c for c in ranked["company"].tolist() if c != "Michelin"][:2]
+    spotlight = ["Michelin"] + top2
+
+    michelin_median = ranked[ranked["company"] == "Michelin"][metric]
+    michelin_median_val = int(michelin_median.iloc[0]) if not michelin_median.empty else None
+    michelin_rows = ranked.reset_index(drop=True)
+    michelin_idx = michelin_rows.index[michelin_rows["company"] == "Michelin"]
+    rank = int(michelin_idx[0]) + 1 if len(michelin_idx) else None
+    leader = str(ranked.iloc[0]["company"]) if not ranked.empty else None
+
+    rank_str = f"#{rank}" if rank else "N/A"
+    leader_note = f" Leader: {leader}." if leader and leader != "Michelin" else ""
+    median_str = f"{michelin_median_val:,}" if michelin_median_val is not None else "N/A"
+
+    st.markdown(f"#### {title}")
+    st.markdown(
+        f"Michelin ranks **{rank_str}** among peers by 10-year median annual {title.lower()}: "
+        f"**{median_str}** filings/year.{leader_note}"
+    )
+
+    chart_left, chart_divider, chart_right = st.columns([1, 0.03, 1.32], gap="medium")
+    with chart_left:
+        st.markdown(f"**{title} — 10-Year Median**", unsafe_allow_html=True)
+        st.markdown(f"<div class='chart-note'>{note} Basis: {min_yr}–{max_yr}.</div>", unsafe_allow_html=True)
+        selection = st.plotly_chart(
+            build_count_rank_bar(ranked, metric),
+            width="stretch",
+            config={"displayModeBar": False, "scrollZoom": False},
+            key=f"rank_{tab_key}",
+            on_select="rerun",
+            selection_mode="points",
+        )
+    with chart_divider:
+        st.markdown(
+            "<div style='height: 470px; width: 1px; background: #111111; opacity: 0.18; margin: 0 auto;'></div>",
+            unsafe_allow_html=True,
+        )
+    with chart_right:
+        selected_company = extract_selected_company(selection)
+        if selected_company:
+            st.markdown(f"**{selected_company} — filings per year**", unsafe_allow_html=True)
+            st.markdown(
+                f"<div class='chart-note' style='margin-top:-0.35rem;'>Annual {title.lower()} for {selected_company}.</div>",
+                unsafe_allow_html=True,
+            )
+            st.plotly_chart(
+                build_company_patent_history(yearly_df, metric, selected_company),
+                width="stretch",
+                config={"displayModeBar": False},
+            )
+        else:
+            st.markdown(f"**{title} per year — Michelin vs. top 2 peers**", unsafe_allow_html=True)
+            st.markdown(
+                "<div class='chart-note' style='margin-top:-0.35rem;'>Annual filing counts. Click a company bar on the left to drill in.</div>",
+                unsafe_allow_html=True,
+            )
+            st.plotly_chart(
+                build_patent_trend(yearly_df, metric, spotlight),
+                width="stretch",
+                config={"displayModeBar": False, "scrollZoom": False},
+            )
+
+
 def get_openai_key_from_env_file() -> str:
     if not ENV_FILE_PATH.exists():
         return ""
@@ -1149,6 +1408,7 @@ def render_chatbot() -> None:
 
 
 income, margin_data, stock_growth_data, dividend_growth_data, ratios_data, stock_prices_daily, latest_year = prepare_competitive_frames()
+patent_yearly, ai_patent_yearly = prepare_patent_frames()
 margin_latest = latest_metric_frame(margin_data, "ebitda_margin")
 michelin_row = margin_latest[margin_latest["company"] == "Michelin"]
 michelin_margin = michelin_row.iloc[0]["ebitda_margin"] if not michelin_row.empty else None
@@ -1158,6 +1418,14 @@ michelin_rank_text = f"#{int(michelin_rank[0]) + 1}" if len(michelin_rank) else 
 
 st.markdown(ARTICLE_CSS, unsafe_allow_html=True)
 st.markdown(get_hero_bg_css(), unsafe_allow_html=True)
+
+# ── Right-side chat sidebar ──────────────────────────────────────────────────
+with st.sidebar:
+    st.caption("Analyst Panel")
+    st.markdown("<div class='chat-panel'>", unsafe_allow_html=True)
+    render_chatbot()
+    st.markdown("</div>", unsafe_allow_html=True)
+
 st.markdown("<div class='article-shell'>", unsafe_allow_html=True)
 st.markdown(
     "<div class='hero-banner'>"
@@ -1199,9 +1467,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-left_col, right_col = st.columns([1.55, 0.95], gap="large")
-with left_col:
-    tabs = st.tabs(["Overview", "EBITDA Margin", "ROIC", "Dividend Growth", "Annual Stock Growth", "Revenue Growth", "EBITDA Growth"])
+# When open: split layout (analytics wide left, sticky chat right). When closed: full width.
+_tab_ctx = st.container()
+
+with _tab_ctx:
+    tabs = st.tabs(["Overview", "EBITDA Margin", "ROIC", "Dividend Growth", "Annual Stock Growth", "Revenue Growth", "EBITDA Growth", "Patents", "AI Patents"])
     with tabs[0]:
         render_overview_rankings(
             [
@@ -1285,14 +1555,21 @@ with left_col:
             income,
             "ebitda_growth",
         )
-with right_col:
-    st.markdown("<div class='chat-panel'>", unsafe_allow_html=True)
-    render_chatbot()
-    st.markdown("</div>", unsafe_allow_html=True)
+    with tabs[7]:
+        render_patent_tab(
+            patent_yearly,
+            "patent_count",
+            "Patent Applications",
+            "Annual USPTO patent applications per company, ranked by 10-year median.",
+            "patents",
+        )
+    with tabs[8]:
+        render_patent_tab(
+            ai_patent_yearly,
+            "ai_patent_count",
+            "AI Patents",
+            "Annual AI-driven patent applications (LLM-classified), ranked by 10-year median.",
+            "ai_patents",
+        )
 
-st.markdown("<h2 class='section-title'>How innovative is Michelin compared to their peers?</h2>", unsafe_allow_html=True)
-st.markdown(
-    "<div class='section-deck'>This second section is intentionally left as the next build target. The patent XML pipeline is now saving source files locally, which gives us the right raw material for the innovation section that comes next.</div>",
-    unsafe_allow_html=True,
-)
 st.markdown("</div>", unsafe_allow_html=True)

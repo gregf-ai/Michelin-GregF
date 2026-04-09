@@ -198,6 +198,65 @@ def load_all_transcripts() -> dict:
     return transcripts
 
 
+_ANALYTICS_DIR = Path(__file__).resolve().parent.parent / "data" / "processed" / "analytics"
+
+
+@lru_cache(maxsize=1)
+def load_patent_filings() -> pd.DataFrame:
+    """Load all USPTO ODP filings per company from filings_raw.jsonl files."""
+    frames = []
+    for ticker in TICKERS:
+        path = DATA_DIR / "uspto_odp" / ticker / "filings_raw.jsonl"
+        if not path.exists():
+            continue
+        records = []
+        with open(path, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rec = json.loads(line)
+                    records.append({
+                        "ticker": ticker,
+                        "company": COMPANY_NAMES.get(ticker, ticker),
+                        "filing_date": rec.get("filing_date", ""),
+                        "application_type": rec.get("application_type", ""),
+                    })
+                except (json.JSONDecodeError, KeyError):
+                    continue
+        if records:
+            frames.append(pd.DataFrame(records))
+    if not frames:
+        return pd.DataFrame()
+    combined = pd.concat(frames, ignore_index=True)
+    combined["filing_year"] = pd.to_datetime(combined["filing_date"], errors="coerce").dt.year
+    return combined
+
+
+@lru_cache(maxsize=1)
+def load_ai_patent_summaries() -> pd.DataFrame:
+    """Load AI-analyzed patent summaries from the analytics output JSONL."""
+    path = _ANALYTICS_DIR / "patent_ai_summaries_ollama.jsonl"
+    if not path.exists():
+        return pd.DataFrame()
+    records = []
+    with open(path, encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                records.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    if not records:
+        return pd.DataFrame()
+    df = pd.DataFrame(records)
+    df["filing_year"] = pd.to_datetime(df["filing_date"], errors="coerce").dt.year
+    return df
+
+
 @lru_cache(maxsize=1)
 def load_all_news() -> dict:
     all_news = {}
