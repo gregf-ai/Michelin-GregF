@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: tire-brand-analyzer
+    name: wheel-street
     runtime: docker
     plan: free
     envVars:

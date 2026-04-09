@@ -12,7 +12,7 @@ from src.data_loader import COMPANY_NAMES
 from src.graph import build_graph
 
 st.set_page_config(
-    page_title="Michelin Competitive Analysis",
+    page_title="Wheel Street",
     page_icon="●",
     layout="wide",
     initial_sidebar_state="collapsed",

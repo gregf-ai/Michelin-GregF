@@ -10,9 +10,9 @@
 
 ## Local Run (Docker)
 1. Build:
-   - docker build -t tire-brand-analyzer .
+   - docker build -t wheel-street .
 2. Run:
-   - docker run -p 8501:8501 -e OPENAI_API_KEY=<your key> tire-brand-analyzer
+   - docker run -p 8501:8501 -e OPENAI_API_KEY=<your key> wheel-street
 3. Open:
    - http://localhost:8501
 

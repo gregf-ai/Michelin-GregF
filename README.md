@@ -1,4 +1,4 @@
-# 🏎️ Tire Brand Financial Analyzer
+# 🏎️ Wheel Street
 
 An interactive application that compares the financial performance of six major global tire manufacturers using data from [roic.ai](https://roic.ai). Features an AI-powered analyst chatbot built with LangGraph that can answer natural language questions about the companies.
 
@@ -80,8 +80,8 @@ git clone https://github.com/gregf-ai/Michelin-GregF.git
 cd Michelin-GregF
 
 # Build and run
-docker build -t tire-brand-analyzer .
-docker run -p 8501:8501 -e OPENAI_API_KEY=your-key-here tire-brand-analyzer
+docker build -t wheel-street .
+docker run -p 8501:8501 -e OPENAI_API_KEY=your-key-here wheel-street
 ```
 
 Open http://localhost:8501
