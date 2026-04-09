@@ -682,8 +682,16 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
             hovertemplate=f"{company}: %{{y:.1f}}%<extra></extra>",
         ), row=row, col=1)
         
-        # Add small value annotations on each data point
-        for x, y in zip(x_vals, y_vals):
+        # Find indices for min, max, first, last points
+        min_idx = y_vals.index(min(y_vals))
+        max_idx = y_vals.index(max(y_vals))
+        first_idx = 0
+        last_idx = len(y_vals) - 1
+        label_indices = set([first_idx, last_idx, min_idx, max_idx])
+        
+        # Add value annotations ONLY for min, max, first, last
+        for idx in label_indices:
+            x, y = x_vals[idx], y_vals[idx]
             fig.add_annotation(
                 xref=f"x{row if row > 1 else ''}", yref=yaxis_refs[i],
                 x=x, y=y,
@@ -703,13 +711,26 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
             font=dict(size=14, color="#111111"),
         )
         
-        # Subtle center line label on left
-        fig.add_annotation(
-            xref="paper", yref=yaxis_refs[i],
-            x=-0.01, y=center_val,
-            text=f"<span style='font-size: 10px; color: #aaaaaa;'>{center_label}</span>",
-            showarrow=False, xanchor="right", yanchor="middle",
-        )
+        # Label with leader line for center value on left
+        if is_growth_metric:
+            # For 0 line, just add leader line
+            fig.add_annotation(
+                xref="paper", yref=yaxis_refs[i],
+                x=-0.19, y=center_val,
+                ax=-30, ay=0,
+                showarrow=True, arrowhead=2, arrowsize=0.8, arrowwidth=0.5, arrowcolor="#999999",
+                text="",
+            )
+        else:
+            # For median, show label with leader line
+            fig.add_annotation(
+                xref="paper", yref=yaxis_refs[i],
+                x=-0.19, y=center_val,
+                ax=-30, ay=0,
+                showarrow=True, arrowhead=2, arrowsize=0.8, arrowwidth=0.5, arrowcolor="#999999",
+                text=f"<span style='font-size: 11px; color: #666666;'>median {center_label}</span>",
+                xanchor="right", yanchor="middle",
+            )
         
         fig.update_yaxes(
             range=[center_val - y_spread, center_val + y_spread],
@@ -724,8 +745,8 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
         )
 
     fig.update_layout(
-        height=480,
-        margin=dict(l=35, r=160, t=8, b=8),
+        height=580,
+        margin=dict(l=50, r=160, t=8, b=8),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
@@ -827,8 +848,14 @@ def render_metric_tab(title: str, note: str, df: pd.DataFrame, metric: str) -> N
     metric_desc = metric_description_map.get(metric, "")
     analysis = get_metric_analysis(df, metric, title)
 
-    st.markdown(f"<h4>{title}</h4>", unsafe_allow_html=True)
-    st.markdown(f"_{metric_desc}_", unsafe_allow_html=True)
+    # Render title with tooltip
+    st.markdown(
+        f"<h4 style='display: flex; align-items: center; gap: 0.5rem;'>"
+        f"{title}"
+        f"<span title='{metric_desc}' style='cursor: help; font-size: 0.9rem; color: #999; font-weight: normal;'>ⓘ</span>"
+        f"</h4>",
+        unsafe_allow_html=True
+    )
     st.markdown(f"**Analysis:** {analysis}", unsafe_allow_html=True)
 
     toggle_key = f"basis_{title.lower().replace(' ', '_')}"
