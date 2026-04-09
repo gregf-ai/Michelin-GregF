@@ -414,7 +414,7 @@ def render_metric_tab(title: str, note: str, df: pd.DataFrame, metric: str) -> N
     with chart_left:
         selection = st.plotly_chart(
             build_rank_bar(df, metric),
-            use_container_width=True,
+            width="stretch",
             config={"displayModeBar": False},
             key=f"rank_{title.lower().replace(' ', '_')}",
             on_select="rerun",
@@ -425,11 +425,11 @@ def render_metric_tab(title: str, note: str, df: pd.DataFrame, metric: str) -> N
         if selected_company:
             st.plotly_chart(
                 build_company_history_bar(df, metric, selected_company),
-                use_container_width=True,
+                width="stretch",
                 config={"displayModeBar": False},
             )
         else:
-            st.plotly_chart(build_top3_trend(df, metric), use_container_width=True, config={"displayModeBar": False})
+            st.plotly_chart(build_top3_trend(df, metric), width="stretch", config={"displayModeBar": False})
 
 
 def get_openai_key_from_env_file() -> str:
@@ -489,7 +489,7 @@ def render_chatbot() -> None:
                 "Which peer is most comparable to Michelin on profitability?",
             ]
             for idx, suggestion in enumerate(suggestions):
-                if st.button(suggestion, key=f"single_page_suggestion_{idx}", use_container_width=True):
+                if st.button(suggestion, key=f"single_page_suggestion_{idx}", width="stretch"):
                     st.session_state.pending_question = suggestion
 
         # ── Fixed-height scrollable message area ──

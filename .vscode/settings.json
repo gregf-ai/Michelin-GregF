@@ -4,7 +4,7 @@
         {
             "previewLimit": 100,
             "driver": "DuckDB",
-            "database": "${workspaceFolder:Michelin-GregF}/tire-brand-analyzer/data/processed/financial_analyst.duckdb",
+            "database": "${workspaceFolder:Michelin-GregF}/data/processed/curated/financial_analyst.duckdb",
             "name": "finanicials"
         }
     ]

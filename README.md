@@ -76,8 +76,8 @@ Data is pre-downloaded and committed to the repository as JSON files for offline
 ### Option 1: Docker (Recommended)
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/tire-brand-analyzer.git
-cd tire-brand-analyzer
+git clone https://github.com/gregf-ai/Michelin-GregF.git
+cd Michelin-GregF
 
 # Build and run
 docker build -t tire-brand-analyzer .
@@ -89,8 +89,8 @@ Open http://localhost:8501
 ### Option 2: Local Python
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/tire-brand-analyzer.git
-cd tire-brand-analyzer
+git clone https://github.com/gregf-ai/Michelin-GregF.git
+cd Michelin-GregF
 
 # Create virtual environment
 python -m venv venv
@@ -135,7 +135,7 @@ This app is configured for [Render](https://render.com) free tier:
 3. Set environment variable: `OPENAI_API_KEY`
 4. Deploy
 
-The `render.yaml` file auto-configures the service.
+The `render.yaml` file now lives at the repo root, so Render can use it directly.
 
 ## Design Decisions
 

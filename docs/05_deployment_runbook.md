@@ -19,7 +19,7 @@
 ## Render Deployment (Docker)
 1. Push repository to GitHub.
 2. In Render: New Web Service -> Connect repo.
-3. Runtime: Docker (render.yaml is included).
+3. Runtime: Docker from the repo root (render.yaml is included at the repo root).
 4. Set env var:
    - OPENAI_API_KEY
 5. Deploy and verify health.
