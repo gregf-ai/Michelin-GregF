@@ -343,6 +343,15 @@ button[data-baseweb="tab"][aria-selected="true"] {
         margin-right: -1rem;
     }
 }
+
+/* Tab container: subtle border to separate from chat and patents */
+[data-testid="stTabs"] {
+    background: linear-gradient(180deg, rgba(248,248,248,0.5) 0%, rgba(250,250,250,0.5) 100%);
+    border: 1px solid rgba(17,17,17,0.06);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
 </style>
 """
 
@@ -606,8 +615,11 @@ def build_top3_trend(df: pd.DataFrame, metric: str, top3: list[str] | None = Non
 
 def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -> go.Figure:
     n = len(companies)
-    fig = make_subplots(rows=n, cols=1, shared_xaxes=True, vertical_spacing=0.1)
+    fig = make_subplots(rows=n, cols=1, shared_xaxes=True, vertical_spacing=0.15)
     yaxis_refs = ["y"] + [f"y{i + 1}" for i in range(1, n)]
+    
+    # Determine if this is a growth metric (center at 0) or margin/ROIC metric (center at median)
+    is_growth_metric = metric in ["revenue_growth", "ebitda_growth", "annual_stock_growth", "dividend_growth"]
 
     for i, company in enumerate(companies):
         row = i + 1
@@ -616,14 +628,28 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
             continue
         x_vals = cdf["fiscal_year"].tolist()
         y_vals = cdf[metric].tolist()
-        median_val = float(cdf[metric].median())
-        y_spread = max(abs(max(y_vals) - median_val), abs(min(y_vals) - median_val), 0.5) * 1.7
+        
+        if is_growth_metric:
+            center_val = 0.0
+            shading_color_above = "rgba(147,196,125,0.2)"  # green
+            shading_color_below = "rgba(210,120,120,0.2)"  # red
+            center_label = "0%"
+        else:
+            center_val = float(cdf[metric].median())
+            shading_color_above = "rgba(160,160,160,0.2)"  # gray
+            shading_color_below = "rgba(160,160,160,0.2)"  # gray
+            center_label = format_pct(center_val)
+        
+        # Optimize y-axis range for better chart height
+        value_range = max(y_vals) - min(y_vals)
+        y_spread = max(value_range * 0.6, abs(max(y_vals) - center_val), abs(min(y_vals) - center_val)) * 1.3
 
+        # Add area shading between data and center line
         fig.add_trace(go.Scatter(
             x=x_vals + x_vals[::-1],
-            y=[max(v, median_val) for v in y_vals] + [median_val] * len(y_vals),
+            y=[max(v, center_val) for v in y_vals] + [center_val] * len(y_vals),
             fill="toself",
-            fillcolor="rgba(147,196,125,0.25)",
+            fillcolor=shading_color_above,
             line_width=0,
             showlegend=False,
             hoverinfo="skip",
@@ -631,20 +657,22 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
 
         fig.add_trace(go.Scatter(
             x=x_vals + x_vals[::-1],
-            y=[min(v, median_val) for v in y_vals] + [median_val] * len(y_vals),
+            y=[min(v, center_val) for v in y_vals] + [center_val] * len(y_vals),
             fill="toself",
-            fillcolor="rgba(210,120,120,0.25)",
+            fillcolor=shading_color_below,
             line_width=0,
             showlegend=False,
             hoverinfo="skip",
         ), row=row, col=1)
 
+        # Center reference line
         fig.add_trace(go.Scatter(
-            x=x_vals, y=[median_val] * len(x_vals),
-            mode="lines", line=dict(color="#bbbbbb", width=1, dash="dot"),
+            x=x_vals, y=[center_val] * len(x_vals),
+            mode="lines", line=dict(color="#999999", width=1, dash="dot"),
             showlegend=False, hoverinfo="skip",
         ), row=row, col=1)
 
+        # Data line with markers
         fig.add_trace(go.Scatter(
             x=x_vals, y=y_vals,
             mode="lines+markers",
@@ -653,7 +681,18 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
             showlegend=False,
             hovertemplate=f"{company}: %{{y:.1f}}%<extra></extra>",
         ), row=row, col=1)
+        
+        # Add small value annotations on each data point
+        for x, y in zip(x_vals, y_vals):
+            fig.add_annotation(
+                xref=f"x{row if row > 1 else ''}", yref=yaxis_refs[i],
+                x=x, y=y,
+                text=f"{y:.0f}%",
+                showarrow=False, yshift=8,
+                font=dict(size=9, color="#666666"),
+            )
 
+        # Company name and final value annotation on right
         val_series = cdf[cdf["fiscal_year"] == 2025][metric]
         val_str = format_pct(val_series.iloc[0]) if not val_series.empty else format_pct(y_vals[-1])
         fig.add_annotation(
@@ -663,8 +702,17 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
             showarrow=False, xanchor="left", yanchor="middle",
             font=dict(size=14, color="#111111"),
         )
+        
+        # Subtle center line label on left
+        fig.add_annotation(
+            xref="paper", yref=yaxis_refs[i],
+            x=-0.01, y=center_val,
+            text=f"<span style='font-size: 10px; color: #aaaaaa;'>{center_label}</span>",
+            showarrow=False, xanchor="right", yanchor="middle",
+        )
+        
         fig.update_yaxes(
-            range=[median_val - y_spread, median_val + y_spread],
+            range=[center_val - y_spread, center_val + y_spread],
             showgrid=False, zeroline=False, showticklabels=False, fixedrange=True,
             row=row, col=1,
         )
@@ -676,8 +724,8 @@ def build_sparkline_stack(df: pd.DataFrame, metric: str, companies: list[str]) -
         )
 
     fig.update_layout(
-        height=420,
-        margin=dict(l=8, r=160, t=8, b=8),
+        height=480,
+        margin=dict(l=35, r=160, t=8, b=8),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         showlegend=False,
@@ -800,10 +848,13 @@ def render_metric_tab(title: str, note: str, df: pd.DataFrame, metric: str) -> N
     if missing:
         year_note += " Missing in this basis: " + ", ".join(missing) + "."
 
-    st.markdown(f"<div class='chart-note'>{note} {year_note}</div>", unsafe_allow_html=True)
     chart_left, chart_right = st.columns([1, 1.35], gap="large")
     with chart_left:
-        st.markdown(f"**{title} — Latest Year**", unsafe_allow_html=True)
+        # Bar chart title based on toggle
+        basis_display = basis if basis == "2025" else "10-Year Median"
+        st.markdown(f"**{title} — {basis_display}**", unsafe_allow_html=True)
+        # Descriptor below title with wrapping
+        st.markdown(f"<div class='chart-note'>{note} {year_note}</div>", unsafe_allow_html=True)
         selection = st.plotly_chart(
             build_rank_bar(ranked, metric),
             width="stretch",
@@ -971,13 +1022,13 @@ st.markdown(
 
 st.markdown("<h2 class='section-title'>Does Michelin have a strong competitive moat?</h2>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='section-deck'>The left side provides the financial figures and visual evidence. The right side keeps a financial analyst agent available in-line for follow-up questions, so analysis happens directly beside the charts.</div>",
+    "<div class='section-deck'><strong>Left:</strong> Competitive metrics from income statements, cash flows, stock prices, and financial ratios across the 10-year period. <strong>Right:</strong> AI analyst with access to SEC filings (10-K, 10-Q), earnings transcripts, news feeds, and patent analytics to contextualize the numbers.</div>",
     unsafe_allow_html=True,
 )
 
 left_col, right_col = st.columns([1.55, 0.95], gap="large")
 with left_col:
-    tabs = st.tabs(["Overview", "EBITDA Margin", "Revenue Growth", "EBITDA Growth", "Annual Stock Growth", "Dividend Growth", "ROIC"])
+    tabs = st.tabs(["Overview", "ROIC", "EBITDA Margin", "Revenue Growth", "EBITDA Growth", "Annual Stock Growth", "Dividend Growth"])
     with tabs[0]:
         render_overview_rankings(
             [
@@ -1021,45 +1072,45 @@ with left_col:
         )
     with tabs[1]:
         render_metric_tab(
+            "ROIC",
+            "Return on invested capital (ROIC) ranking on the left, followed by the top two peers and Michelin over time.",
+            ratios_data,
+            "return_on_inv_capital",
+        )
+    with tabs[2]:
+        render_metric_tab(
             "EBITDA Margin",
-            "Latest-year EBITDA margin ranking on the left, followed by the top two peers and Michelin over time.",
+            "EBITDA margin ranking on the left, followed by the top two peers and Michelin over time.",
             margin_data,
             "ebitda_margin",
         )
-    with tabs[2]:
+    with tabs[3]:
         render_metric_tab(
             "Revenue Growth",
             "Year-over-year revenue growth based on sales revenue turnover.",
             income,
             "revenue_growth",
         )
-    with tabs[3]:
+    with tabs[4]:
         render_metric_tab(
             "EBITDA Growth",
             "Year-over-year EBITDA growth based on annual EBITDA values.",
             income,
             "ebitda_growth",
         )
-    with tabs[4]:
+    with tabs[5]:
         render_metric_tab(
             "Annual Stock Growth",
             "Year-over-year stock price growth based on split-adjusted year-end close.",
             stock_growth_data,
             "annual_stock_growth",
         )
-    with tabs[5]:
+    with tabs[6]:
         render_metric_tab(
             "Dividend Growth",
             "Year-over-year growth in dividends paid based on cf_dvd_paid (absolute cash outflow).",
             dividend_growth_data,
             "dividend_growth",
-        )
-    with tabs[6]:
-        render_metric_tab(
-            "ROIC",
-            "Return on invested capital (ROIC) ranking on the left, followed by the top two peers and Michelin over time.",
-            ratios_data,
-            "return_on_inv_capital",
         )
 with right_col:
     st.markdown("<div class='chat-panel'>", unsafe_allow_html=True)
