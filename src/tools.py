@@ -230,8 +230,27 @@ def search_transcripts(query: str, company: str = "all", years: int = 0, max_res
     if not transcripts:
         return "No transcript data available."
 
-    query_terms = [t for t in query.lower().split() if t]
+    query_lower = (query or "").lower()
+    query_terms = re.findall(r"[a-z0-9]+", query_lower)
     requested_ticker = _resolve_ticker(company) if company.lower() != "all" else None
+    if requested_ticker is None and company.lower() == "all":
+        # Infer company from natural-language prompt, e.g., "Michelin's 2025 transcript".
+        for ticker, cname in COMPANY_NAMES.items():
+            name_terms = re.findall(r"[a-z0-9]+", cname.lower())
+            if ticker.lower() in query_lower or any(term in query_terms for term in name_terms):
+                requested_ticker = ticker
+                break
+
+    requested_years = {
+        int(m.group(0))
+        for m in re.finditer(r"\b(19\d{2}|20\d{2})\b", query_lower)
+    }
+    stop_terms = {
+        "transcript", "transcripts", "earning", "earnings", "call", "calls",
+        "summarize", "summary", "michelin", "goodyear", "bridgestone",
+        "continental", "pirelli", "sumitomo", "q", "quarter",
+    }
+    content_terms = [t for t in query_terms if not t.isdigit() and t not in stop_terms]
     current_year = pd.Timestamp.utcnow().year
     cutoff_year = current_year - years + 1 if years > 0 else None
     results = []
@@ -248,13 +267,25 @@ def search_transcripts(query: str, company: str = "all", years: int = 0, max_res
             year = int(t_data.get("year") or 0)
             if cutoff_year and year and year < cutoff_year:
                 continue
+            if requested_years and year and year not in requested_years:
+                continue
 
             # Find paragraphs containing the query terms
             paragraphs = content.split("\n\n")
             matches = []
             for para in paragraphs:
-                if any(term in para.lower() for term in query_terms):
+                if any(term in para.lower() for term in content_terms):
                     matches.append(para.strip()[:500])
+
+            # Metadata fallback: if user asked for a specific period, return opening
+            # excerpts even when keyword-in-body matching is sparse.
+            if not matches and requested_years:
+                for para in paragraphs:
+                    clean = para.strip()
+                    if clean:
+                        matches.append(clean[:500])
+                    if len(matches) >= 2:
+                        break
 
             if matches:
                 quarter = t_data.get("quarter", "?")
