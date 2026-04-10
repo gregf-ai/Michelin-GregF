@@ -110,8 +110,8 @@ h1, h2, h3, h4 {
 
 .section-deck {
     max-width: 58ch;
-    font-size: 1.25rem;
-    line-height: 1.75;
+    font-size: 0.95rem;
+    line-height: 1.6;
     color: #3d3d3d;
     margin-bottom: 1.5rem;
 }
@@ -1860,7 +1860,7 @@ st.markdown(
 st.markdown("<h2 class='section-title'>Does Michelin have a strong competitive moat?</h2>", unsafe_allow_html=True)
 st.markdown(
     "<div class='section-deck' style='max-width:none;width:100%;box-sizing:border-box;background:#f8f8f8;border:1px solid #ececec;padding:1.1rem 1.2rem;border-radius:8px;white-space:normal;overflow-x:hidden;overflow-y:hidden;'>"
-    "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin-bottom:0.5rem;'><strong>Thesis</strong></div>"
+    "<div style='font-family:Libre Baskerville, serif;font-size:0.98rem;margin-bottom:0.5rem;'><strong>Thesis</strong></div>"
     "<div style='margin-bottom:0.6rem;'>Companies with strong competitive moats and disciplined management tend to show the following traits:</div>"
     "<ol style='margin:0.1rem 0 1rem 1.35rem;padding:0;line-height:1.45;white-space:normal;'>"
     "<li>Higher margins than peers.</li>"
@@ -1869,13 +1869,13 @@ st.markdown(
     "<li>Sustained revenue and profit growth driven by operational excellence and innovation.</li>"
     "<li>Prolific patent and innovation funnels — highly competitive companies continuously invest in IP. In recent years, AI patents have become an increasingly important signal of a company's ability to adapt to and capitalise on changing technology.</li>"
     "</ol>"
-    "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin:0.25rem 0 0.5rem;'><strong>Methodology</strong></div>"
+    "<div style='font-family:Libre Baskerville, serif;font-size:0.98rem;margin:0.25rem 0 0.5rem;'><strong>Methodology</strong></div>"
     "<ul style='margin:0.1rem 0 1rem 0.25rem;padding:0;line-height:1.45;white-space:normal;list-style:none;'>"
     "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Companies:</strong> Michelin, Bridgestone, Goodyear, Continental, Pirelli, Sumitomo.</li>"
     "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Sources:</strong> Curated income statement, cash flow, ratio, and stock price datasets; supporting transcripts, filings, and news for context.</li>"
     "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Timelines:</strong> Financial comparisons use 10-year history plus 2025 snapshots; stock views include yearly OHLC from daily adjusted-close data.</li>"
     "</ul>"
-    "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin:0.25rem 0 0.5rem;'><strong>Conclusion</strong></div>"
+    "<div style='font-family:Libre Baskerville, serif;font-size:0.98rem;margin:0.25rem 0 0.5rem;'><strong>Conclusion</strong></div>"
     "<ul style='margin:0.1rem 0 0 0.25rem;padding:0;line-height:1.45;white-space:normal;list-style:none;text-align:left;'>"
     "<li style='display:flex;align-items:flex-start;gap:0.55rem;white-space:normal;'><span style='color:#6e9f76;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:1.15rem;line-height:1;font-size:1.02rem;margin-top:0.08rem;'>✓</span><span>Michelin consistently posts the highest margins among peers, suggesting a differentiated competitive edge.</span></li>"
     "<li style='display:flex;align-items:flex-start;gap:0.55rem;white-space:normal;'><span style='color:#6e9f76;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:1.15rem;line-height:1;font-size:1.02rem;margin-top:0.08rem;'>✓</span><span>Michelin appears to demonstrate strong capital discipline, with the second-most efficient capital deployment among peers.</span></li>"
