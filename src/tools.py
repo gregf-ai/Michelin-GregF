@@ -284,6 +284,8 @@ def search_transcripts(query: str, company: str = "all", years: int = 0, max_res
     content_terms = [t for t in query_terms if not t.isdigit() and t not in stop_terms]
     current_year = pd.Timestamp.utcnow().year
     cutoff_year = current_year - years + 1 if years > 0 else None
+    if requested_years:
+        cutoff_year = None
 
     # Build DuckDB query — pull matching rows using indexed ticker/year filters.
     conn = duckdb.connect(str(DUCKDB_PATH), read_only=True)

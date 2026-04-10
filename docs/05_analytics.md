@@ -32,3 +32,8 @@
 - Data extraction and processing framework is present.
 - Dashboard focus is currently financial moat analysis.
 - Patent section is prepared for extension and deeper UI surfacing.
+
+## 3. Agent Runtime Context
+
+- Chat analysis is served through LangChain with intent routing (`financial`, `transcript`, `patent`, `mixed`).
+- Hosted mode calls FastAPI `/qa`, returning answer text plus evidence metadata (`citations`, `tool_trace`).

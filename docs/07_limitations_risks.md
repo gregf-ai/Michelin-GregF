@@ -11,8 +11,9 @@
 - Median-based ranking can mask recent step-changes.
 
 ## Agent Risks
-- LLM quality depends on prompt routing and tool selection.
+- LLM quality depends on route classification and tool selection.
 - Hallucination risk is mitigated but not eliminated.
+- Heuristic router can misclassify ambiguous prompts into suboptimal tool subsets.
 - SQL tool misuse could produce misleading summaries without validation.
 
 ## Operational Risks

@@ -32,6 +32,7 @@ Document where data comes from, how complete it is, and how it is used in analys
 ## Data Freshness and Reproducibility
 - App runs on local snapshot data for deterministic demos.
 - Refresh handled by ETL scripts in `data/extract`, `data/transform`, and `data/load`.
+- Transcript retrieval in the agent runtime is served from DuckDB (`transcripts` table), synced from raw JSON.
 
 ## Known Gaps
 - Coverage differs by ticker and endpoint.
@@ -41,3 +42,9 @@ Document where data comes from, how complete it is, and how it is used in analys
 ## ETL Detail
 For ETL folder structure, stage responsibilities, naming conventions, and operational rules,
 see `data/README_ETL.md`.
+
+## Targeted Refresh Notes
+- Transcripts can be refreshed without re-downloading all data types:
+  - `python data/extract/download.py --types transcripts`
+  - `python data/transform/parse_manual_transcripts.py`
+  - `python data/load/process_to_duckdb.py --sync-transcripts-only`

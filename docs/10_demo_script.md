@@ -13,11 +13,14 @@
 ## 2:30 - 4:00 | Agent Walkthrough
 - Ask prepared prompts:
   - Why does Michelin maintain higher margins than competitors?
+  - Summarize Michelin's 2025 earnings transcript.
   - Which peer has strongest shareholder return profile?
   - What evidence supports Michelin's weakest growth area?
 - Highlight tool-grounded, numeric responses.
+- Open Evidence expander to show citations and tool trace.
 
 ## 4:00 - 5:00 | Architecture and Tradeoffs
 - Explain snapshot-based reliability vs data freshness tradeoff.
-- Explain LangGraph tool loop and evidence-first response pattern.
+- Explain LangChain router flow (`financial|transcript|patent|mixed`) and route-specific tools.
+- Explain hosted split: Streamlit UI -> FastAPI `/qa` endpoint.
 - Close with roadmap: deeper patent UX and automated ETL manifests.

@@ -14,7 +14,7 @@ Companies with durable moats and disciplined management tend to show:
 1. Build a six-company peer set: Michelin, Goodyear, Bridgestone, Continental, Pirelli, Sumitomo.
 2. Compare financial signals using 10-year medians and 2025 point-in-time values.
 3. Use interactive drilldowns to inspect each company trend.
-4. Support qualitative interpretation through a tool-grounded LangGraph financial analyst.
+4. Support qualitative interpretation through a routed, tool-grounded LangChain financial analyst (local or hosted via FastAPI `/qa`).
 
 ## Conclusion
 - Michelin is structurally strong on margin performance.

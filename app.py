@@ -793,6 +793,8 @@ def render_overview_rankings(
         ),
     ]
 
+    items.sort(key=lambda x: x["rank"] if x["rank"] is not None else 999)
+
     lines: list[str] = []
     for item in items:
         rank = item["rank"]
@@ -814,7 +816,7 @@ def render_overview_rankings(
     st.markdown(
         "<div class='overview-panel'>"
         "<div class='overview-head'>Michelin Competitive Scorecard</div>"
-        "<div class='overview-subhead'>Fixed scorecard order. Rank is Michelin's position among 5 peers on 10-year median.</div>"
+        "<div class='overview-subhead'>Sorted by Michelin rank (lowest to highest). Rank is Michelin's position among 5 peers on 10-year median.</div>"
         "<div class='overview-rank-label'>Rank</div>"
         + "".join(lines)
         + "</div>",
@@ -1880,7 +1882,7 @@ st.markdown(
 _tab_ctx = st.container()
 
 with _tab_ctx:
-    tabs = st.tabs(["Overview", "EBITDA Margin", "ROIC", "Dividend Growth", "Annual Stock Growth", "Revenue Growth", "EBITDA Growth", "Patent Applications/Year", "AI Patent Applications/Year"])
+    tabs = st.tabs(["Overview", "EBITDA Margin", "ROIC", "Dividend Growth", "Annual Stock Growth", "Revenue Growth", "EBITDA Growth", "Patents", "AI Patents"])
     with tabs[0]:
         render_overview_rankings(
             ratios_data,

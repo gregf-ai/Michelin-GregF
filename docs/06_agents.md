@@ -26,7 +26,7 @@ The project now supports two execution modes for the chat analyst.
 
 ### Local In-Process Mode
 
-Streamlit imports and runs LangGraph directly in the same process.
+Streamlit imports and runs the LangChain agent runtime directly in the same process.
 
 - Good for local development and quick iteration.
 - Uses `OPENAI_API_KEY` from environment/secrets/.env.
@@ -49,7 +49,7 @@ Why this split is useful:
 - Easier to scale and monitor the backend.
 - Cleaner boundary for adding auth/rate limits later.
 
-## 3) Financial Analyst Agent (LangGraph)
+## 3) Financial Analyst Agent (LangChain)
 
 ### Objective
 
@@ -58,13 +58,14 @@ source grounding.
 
 ### Orchestration Pattern
 
-The graph follows a standard reasoning loop:
+The graph follows a routed reasoning loop:
 
-1. Agent node receives message history.
-2. Model decides whether tool calls are needed.
-3. Tool node executes requested tools.
-4. Control returns to agent for synthesis.
-5. Loop ends when no further tool calls are needed.
+1. Router node inspects the latest user message and classifies route: `financial`, `transcript`, `patent`, or `mixed`.
+2. Agent node binds a route-specific tool subset.
+3. Model decides whether tool calls are needed.
+4. Tool node executes requested tools.
+5. Control returns to agent for synthesis.
+6. Loop ends when no further tool calls are needed.
 
 This enables multi-step evidence gathering instead of one-shot prompting.
 
@@ -86,6 +87,7 @@ Current tools include:
 - `get_financials`
 - `get_ratios`
 - `search_transcripts`
+- `search_patent_filings`
 - `search_news`
 - `get_stock_performance`
 - `get_company_overview`
@@ -94,12 +96,25 @@ Current tools include:
 
 These tools pull from curated CSV/JSON snapshots and DuckDB tables.
 
+Route-specific tool binding:
+
+- `financial`: financial metrics, ratios, stock performance, coverage, SQL
+- `transcript`: transcripts/news/company context/coverage/SQL
+- `patent`: patent search + company context/coverage/SQL
+- `mixed`: full tool set
+
+Important retrieval detail:
+
+- `search_transcripts` queries DuckDB (`transcripts` table) directly for speed and consistency.
+- Summary CSV coverage is only a fallback note when transcript records are missing.
+
 ## 4) Hosted API Service
 
 The backend service exposes agent/data capabilities as HTTP endpoints.
 
 ### Endpoints
 
+- `GET /`
 - `GET /health`
 - `GET /data/coverage`
 - `POST /query/financial-sql`
@@ -124,6 +139,9 @@ Output returns:
 If the backend is missing `OPENAI_API_KEY`, `/qa` returns HTTP 503 with an
 explicit configuration message.
 
+If `OPENAI_API_KEY` is a placeholder value (`your-real-key`, `your-key-here`, etc.),
+`/qa` also returns HTTP 503 with explicit remediation guidance.
+
 ## 5) Evidence and Transparency
 
 Evidence is surfaced at two layers:
@@ -134,7 +152,7 @@ Transcript citations are extracted using the contract format:
 
 `[Transcript: Company Q# YYYY, call date YYYY-MM-DD]`
 
-These are returned as a normalized list in `/qa.citations`.
+These are returned as a normalized list in the `/qa` response field `citations`.
 
 ### Tool Trace
 
@@ -215,8 +233,8 @@ The blueprint defines two services:
 1. `wheel-street-api` (FastAPI)
 2. `wheel-street` (Streamlit)
 
-The frontend uses `ANALYST_API_BASE_URL` from the API host and routes chat
-requests through `/qa`.
+The frontend uses `ANALYST_API_BASE_URL` as a full host URL (for example,
+`https://wheel-street-api.onrender.com`) and routes chat requests through `/qa`.
 
 Benefits:
 
@@ -236,7 +254,7 @@ Benefits:
 
 If you want to understand the system by reading code in order, use this path:
 
-1. `src/graph.py`: LangGraph loop and agent control flow.
+1. `src/graph.py`: LangChain loop and agent control flow.
 2. `src/tools.py`: evidence tools and DuckDB query guardrails.
 3. `api_service/main.py`: hosted endpoint wiring and QA evidence extraction.
 4. `app.py`: remote/local mode switch and chat rendering behavior.

@@ -7,7 +7,7 @@
 
 ## AI Layer
 - LangChain for tool interface and model integration
-- LangGraph for iterative agent workflows (plan/research/analyze loop)
+- LangChain for router-based orchestration (`financial|transcript|patent|mixed`)
 - OpenAI Chat models for analyst responses
 
 ## Data Layer
@@ -18,8 +18,10 @@
 
 ## Deployment Layer
 - Dockerized runtime
-- Render web service deployment
+- Render blueprint with two services:
+	- `wheel-street` (Streamlit frontend)
+	- `wheel-street-api` (FastAPI backend)
 
 ## Why This Stack
 - Fast to build, easy to demo, and clear tradeoffs for interview discussion.
-- Strong signal on practical AI-agent orchestration with grounded tools.
+- Strong signal on practical AI-agent orchestration with grounded, route-aware tools.

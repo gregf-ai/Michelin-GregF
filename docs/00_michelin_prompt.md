@@ -30,7 +30,7 @@ A limited and monitored OpenAI API key will be provided.
 - You are expected to incorporate LLM usage in a way that is relevant and adds value
 to the application.
 - You are encouraged to make use of any orchestration framework (e.g.,
-LangChain, LangGraph, Strands, or similar).
+LangChain, Strands, or similar).
 - Use of MCP (either self-hosted or public tooling) is welcome and encouraged if
 relevant to your approach.
 
