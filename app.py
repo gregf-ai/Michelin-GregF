@@ -1,4 +1,4 @@
-import base64
+﻿import base64
 import os
 import traceback
 from pathlib import Path
@@ -387,7 +387,7 @@ section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] butto
 .overview-main {
     font-size: 1.06rem;
     line-height: 1.55;
-    color: #222222;
+    color: #666666;
     word-break: break-word;
 }
 
@@ -718,14 +718,16 @@ def get_company_rank(df: pd.DataFrame, metric: str, company: str = "Michelin") -
 
 
 def rank_emoji(rank: int | None) -> str:
+    sq = "<span style='display:inline-block;width:1em;height:1em;border-radius:2px;vertical-align:middle;margin-right:2px;background:{color}'></span>"
     if rank is None:
-        return "⚪"
+        return sq.format(color="#aaaaaa")
     if rank == 1:
-        return "✅"
-    if rank <= 3:
-        return "🟢"
-    return "❌"
-
+        return sq.format(color="#1a5c35")
+    if rank == 2:
+        return sq.format(color="#2ecc71")
+    if rank <= 4:
+        return sq.format(color="#f1c40f")
+    return sq.format(color="#e74c3c")
 
 def render_overview_rankings(
     ratios_data: pd.DataFrame,
@@ -811,7 +813,7 @@ def render_overview_rankings(
         if rank is None:
             leader_note = " Data unavailable for Michelin in this metric."
         elif rank != 1 and item["leader"]:
-            leader_note = f" Leader: {item['leader']}."
+            leader_note = f" <strong style='color:#111111'>Leader:</strong> <span style='color:#111111'>{item['leader']}</span>."
 
         lines.append(
             "<div class='overview-line'>"
