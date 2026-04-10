@@ -1441,7 +1441,7 @@ def render_patent_tab(
     with chart_right:
         selected_company = extract_selected_company(selection)
         if selected_company:
-            st.markdown(f"**{selected_company} — filings per year**", unsafe_allow_html=True)
+            st.markdown(f"**{selected_company} — patent applications per year**", unsafe_allow_html=True)
             st.markdown(
                 f"<div class='chart-note' style='margin-top:-0.35rem;'>Annual {title.lower()} for {selected_company}.</div>",
                 unsafe_allow_html=True,
@@ -1823,7 +1823,7 @@ st.markdown(
 _tab_ctx = st.container()
 
 with _tab_ctx:
-    tabs = st.tabs(["Overview", "EBITDA Margin", "ROIC", "Dividend Growth", "Annual Stock Growth", "Revenue Growth", "EBITDA Growth", "Patents", "AI Patents"])
+    tabs = st.tabs(["Overview", "EBITDA Margin", "ROIC", "Dividend Growth", "Annual Stock Growth", "Revenue Growth", "EBITDA Growth", "Patent Applications/Year", "AI Patent Applications/Year"])
     with tabs[0]:
         render_overview_rankings(
             [
@@ -1864,13 +1864,13 @@ with _tab_ctx:
                     "dividend_growth",
                 ),
                 (
-                    "Patents per Year",
+                    "Patent Applications per Year",
                     "Annual USPTO patent applications, a proxy for innovation pipeline and R&D output.",
                     patent_yearly,
                     "patent_count",
                 ),
                 (
-                    "AI Patents per Year",
+                    "AI Patent Applications per Year",
                     "Annual AI-driven patent applications (LLM-classified), indicating AI R&D intensity.",
                     ai_patent_yearly,
                     "ai_patent_count",
@@ -1923,7 +1923,7 @@ with _tab_ctx:
         render_patent_tab(
             patent_yearly,
             "patent_count",
-            "Patents per Year",
+            "Patent Applications per Year",
             "Annual USPTO patent applications per company, ranked by 10-year median.",
             "patents",
         )
@@ -1931,7 +1931,7 @@ with _tab_ctx:
         render_patent_tab(
             ai_patent_yearly,
             "ai_patent_count",
-            "AI Patents per Year",
+            "AI Patent Applications per Year",
             "Annual AI-driven patent applications (LLM-classified), ranked by 10-year median.",
             "ai_patents",
         )
