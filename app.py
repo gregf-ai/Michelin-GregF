@@ -47,6 +47,12 @@ ARTICLE_CSS = """
     box-shadow: none !important;
 }
 
+/* Keep chat panel permanently visible: hide collapse/expand controls. */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapsedControl"] {
+    display: none !important;
+}
+
 [data-testid="block-container"] {
     max-width: 1560px;
     padding-top: 0.85rem;
@@ -164,12 +170,32 @@ h1, h2, h3, h4 {
 .chat-panel [data-testid="stChatMessage"] p,
 .chat-panel [data-testid="stChatMessage"] li,
 .chat-panel [data-testid="stChatMessage"] div {
-    font-size: 1rem !important;
-    line-height: 1.5 !important;
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+}
+
+.chat-panel .stCaption,
+.chat-panel [data-testid="stCaptionContainer"] {
+    font-size: 0.82rem !important;
+    line-height: 1.35 !important;
 }
 
 .chat-panel [data-testid="stChatMessage"] {
     background: transparent;
+}
+
+/* Compact chat avatars/icons */
+.chat-panel [data-testid="stChatMessageAvatarUser"],
+.chat-panel [data-testid="stChatMessageAvatarAssistant"] {
+    width: 1.35rem !important;
+    height: 1.35rem !important;
+    min-width: 1.35rem !important;
+    min-height: 1.35rem !important;
+}
+
+.chat-panel [data-testid="stChatMessageAvatarUser"] *,
+.chat-panel [data-testid="stChatMessageAvatarAssistant"] * {
+    font-size: 0.68rem !important;
 }
 
 /* Chat input field and placeholder on dark background */
@@ -178,6 +204,7 @@ h1, h2, h3, h4 {
     color: #f4f4f4 !important;
     background: #191919 !important;
     border: 1px solid #3a3a3a !important;
+    font-size: 0.88rem !important;
 }
 
 .chat-panel [data-testid="stChatInput"] textarea::placeholder,
@@ -225,11 +252,15 @@ section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] butto
     color: #f0f0f0 !important;
     -webkit-text-fill-color: #f0f0f0 !important;
     opacity: 1 !important;
+    font-size: 0.8rem !important;
+    line-height: 1.22 !important;
 }
 
 section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button * {
     color: #f0f0f0 !important;
     -webkit-text-fill-color: #f0f0f0 !important;
+    font-size: 0.8rem !important;
+    line-height: 1.22 !important;
 }
 
 section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button:hover {
@@ -429,6 +460,7 @@ button[data-baseweb="tab"][aria-selected="true"] {
         margin-left: -1rem;
         margin-right: -1rem;
     }
+
 }
 
 /* Tab container: subtle border to separate from chat and patents */
@@ -441,8 +473,19 @@ button[data-baseweb="tab"][aria-selected="true"] {
 }
 
 /* ── Streamlit default sidebar (dark themed) ── */
+/* Streamlit renders sidebar as the first pane; reverse row order so it appears on the right. */
+[data-testid="stAppViewContainer"] {
+    flex-direction: row-reverse;
+}
+
 section[data-testid="stSidebar"] {
     background: #0f0f0f !important;
+    left: auto !important;
+    right: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    min-width: 440px !important;
+    width: 440px !important;
 }
 
 section[data-testid="stSidebar"] > div {
@@ -1453,7 +1496,16 @@ def _remote_qa(api_base_url: str, history: list[tuple[str, str, dict]]) -> tuple
         json={"messages": payload_messages},
         timeout=240,
     )
-    resp.raise_for_status()
+    if not resp.ok:
+        detail = ""
+        try:
+            body = resp.json()
+            detail = str(body.get("detail", "")).strip()
+        except ValueError:
+            detail = (resp.text or "").strip()
+        if detail:
+            raise RuntimeError(f"API error {resp.status_code}: {detail}")
+        raise RuntimeError(f"API error {resp.status_code}: {resp.reason}")
     body = resp.json()
     answer = body.get("answer", "")
     if not answer:
@@ -1556,20 +1608,7 @@ def _render_chatbot_impl() -> None:
             st.info("OpenAI credentials are not available — chat is offline.")
             return
 
-        # ── Fixed-height scrollable message area ──
         history = _iter_chat_history()
-        has_history = bool(history)
-        chat_box = st.container(height=700 if (has_history or st.session_state.chat_busy) else 380, border=True)
-        with chat_box:
-            if has_history:
-                for role, text, meta in history:
-                    with st.chat_message(role):
-                        st.markdown(text)
-                        if role == "assistant":
-                            _render_remote_evidence(meta)
-            else:
-                st.caption("Start with a question and this panel will expand into a scrollable conversation view.")
-
         pending_question = st.session_state.pop("pending_question", None) if "pending_question" in st.session_state else None
 
         if not history and not st.session_state.chat_busy and pending_question is None:
@@ -1588,8 +1627,17 @@ def _render_chatbot_impl() -> None:
                         st.session_state.pending_question = suggestion
                         st.rerun()
 
-        # ── Input bar (always at a fixed position below the container) ──
+        # Keep the input near the top of the panel so no scrolling is needed to ask the first question.
         user_input = pending_question or st.chat_input("Ask about Michelin versus peers")
+
+        has_history = bool(history)
+        chat_box = st.container(height=560 if (has_history or st.session_state.chat_busy) else 260, border=True)
+        with chat_box:
+            for role, text, meta in history:
+                with st.chat_message(role):
+                    st.markdown(text)
+                    if role == "assistant":
+                        _render_remote_evidence(meta)
 
         if user_input:
             st.session_state.chat_busy = True

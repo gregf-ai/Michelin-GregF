@@ -170,20 +170,27 @@ def download_transcripts(session, ticker):
         print(f"ERROR: {e}")
 
 
-def download_all(tickers=None):
+VALID_TYPES = {"financials", "news", "transcripts"}
+
+
+def download_all(tickers=None, types=None):
     session = requests.Session()
     os.makedirs(DATA_DIR, exist_ok=True)
 
     run_tickers = tickers or TICKERS
+    run_types = types or VALID_TYPES
 
     for ticker in run_tickers:
         print(f"\n{'='*50}")
         print(f"Downloading data for {ticker}")
         print(f"{'='*50}")
 
-        download_standard_endpoints(session, ticker)
-        download_news(session, ticker)
-        download_transcripts(session, ticker)
+        if "financials" in run_types:
+            download_standard_endpoints(session, ticker)
+        if "news" in run_types:
+            download_news(session, ticker)
+        if "transcripts" in run_types:
+            download_transcripts(session, ticker)
 
     print(f"\nDone! Data saved to {DATA_DIR}")
 
@@ -197,18 +204,38 @@ def _parse_args():
         default="",
         help="Comma-separated subset of tickers to process (default: all configured)",
     )
+    parser.add_argument(
+        "--types",
+        default="",
+        help=(
+            "Comma-separated subset of data types to download: "
+            "financials, news, transcripts (default: all)"
+        ),
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = _parse_args()
     selected_tickers = [t.strip().upper() for t in args.tickers.split(",") if t.strip()]
+    selected_types = {t.strip().lower() for t in args.types.split(",") if t.strip()}
+
     if selected_tickers:
         unknown = [t for t in selected_tickers if t not in TICKERS]
         if unknown:
             raise ValueError(
                 f"Unknown ticker(s): {', '.join(unknown)}. Supported: {', '.join(TICKERS)}"
             )
-        download_all(selected_tickers)
-    else:
-        download_all()
+
+    if selected_types:
+        unknown_types = selected_types - VALID_TYPES
+        if unknown_types:
+            raise ValueError(
+                f"Unknown type(s): {', '.join(sorted(unknown_types))}. "
+                f"Supported: {', '.join(sorted(VALID_TYPES))}"
+            )
+
+    download_all(
+        tickers=selected_tickers or None,
+        types=selected_types or None,
+    )

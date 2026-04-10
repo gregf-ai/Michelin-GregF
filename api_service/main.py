@@ -249,8 +249,14 @@ def patents(req: PatentSearchRequest) -> PatentSearchResponse:
 
 @app.post("/qa", response_model=QaResponse)
 def qa(req: QaRequest) -> QaResponse:
-    if not os.environ.get("OPENAI_API_KEY"):
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
         raise HTTPException(status_code=503, detail="OPENAI_API_KEY is not configured on the API service.")
+    if api_key.lower() in {"your-real-key", "your-key-here", "changeme", "replace-me"}:
+        raise HTTPException(
+            status_code=503,
+            detail="OPENAI_API_KEY is set to a placeholder value. Set a real OpenAI API key.",
+        )
 
     messages = []
 

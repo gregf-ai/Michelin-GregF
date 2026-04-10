@@ -132,6 +132,32 @@ def _format_transcript_source(company: str, quarter, year, date_value) -> str:
     return f"[Transcript: {company} {quarter_label} {year}, call date {date_str}]"
 
 
+def _transcript_summary_coverage_note(requested_ticker: str | None = None) -> dict[str, list[int]]:
+    """Fallback coverage source from transcript summary CSV when raw transcripts are sparse."""
+    path = PROJECT_ROOT / "data" / "processed" / "analytics" / "transcript_summaries_ollama.csv"
+    if not path.exists():
+        return {}
+
+    try:
+        df = pd.read_csv(path)
+    except Exception:
+        return {}
+
+    coverage: dict[str, list[int]] = {}
+    if df.empty or "company" not in df.columns or "year" not in df.columns:
+        return coverage
+
+    if requested_ticker and requested_ticker in COMPANY_NAMES:
+        company_name = COMPANY_NAMES[requested_ticker]
+        df = df[df["company"] == company_name]
+
+    for company_name, group in df.groupby("company"):
+        years = sorted({int(y) for y in pd.to_numeric(group["year"], errors="coerce").dropna().tolist()})
+        if years:
+            coverage[str(company_name)] = years
+    return coverage
+
+
 # ── Tool definitions ──────────────────────────────────────────────────────────
 
 
@@ -226,18 +252,23 @@ def search_transcripts(query: str, company: str = "all", years: int = 0, max_res
     Args:
         query: Keywords to search for in transcript text.
     """
-    transcripts = load_all_transcripts()
-    if not transcripts:
-        return "No transcript data available."
+    if not DUCKDB_PATH.exists():
+        return (
+            "DuckDB database not found at data/processed/curated/financial_analyst.duckdb. "
+            "Run data/load/process_to_duckdb.py first."
+        )
 
     query_lower = (query or "").lower()
     query_terms = re.findall(r"[a-z0-9]+", query_lower)
-    requested_ticker = _resolve_ticker(company) if company.lower() != "all" else None
+
+    requested_ticker: str | None = _resolve_ticker(company) if company.lower() != "all" else None
     if requested_ticker is None and company.lower() == "all":
-        # Infer company from natural-language prompt, e.g., "Michelin's 2025 transcript".
         for ticker, cname in COMPANY_NAMES.items():
             name_terms = re.findall(r"[a-z0-9]+", cname.lower())
-            if ticker.lower() in query_lower or any(term in query_terms for term in name_terms):
+            # Use substring match so possessives like "michelin's" / "michelins" still hit.
+            if ticker.lower() in query_lower or cname.lower() in query_lower or any(
+                query_lower.find(term) != -1 for term in name_terms
+            ):
                 requested_ticker = ticker
                 break
 
@@ -253,69 +284,90 @@ def search_transcripts(query: str, company: str = "all", years: int = 0, max_res
     content_terms = [t for t in query_terms if not t.isdigit() and t not in stop_terms]
     current_year = pd.Timestamp.utcnow().year
     cutoff_year = current_year - years + 1 if years > 0 else None
-    results = []
 
-    for ticker, transcript_list in transcripts.items():
-        if requested_ticker and ticker != requested_ticker:
-            continue
-        company = COMPANY_NAMES.get(ticker, ticker)
-        for t_data in transcript_list:
-            content = t_data.get("content", "")
-            if not content:
-                continue
+    # Build DuckDB query — pull matching rows using indexed ticker/year filters.
+    conn = duckdb.connect(str(DUCKDB_PATH), read_only=True)
+    try:
+        sql_parts = ["SELECT ticker, company, year, quarter, date, content FROM transcripts WHERE content IS NOT NULL"]
+        params: list = []
+        if requested_ticker:
+            sql_parts.append("AND ticker = ?")
+            params.append(requested_ticker)
+        if requested_years:
+            placeholders = ", ".join("?" * len(requested_years))
+            sql_parts.append(f"AND year IN ({placeholders})")
+            params.extend(sorted(requested_years))
+        if cutoff_year:
+            sql_parts.append("AND year >= ?")
+            params.append(cutoff_year)
+        sql_parts.append("ORDER BY ticker, year DESC, quarter DESC")
+        rows = conn.execute(" ".join(sql_parts), params).fetchall()
+    finally:
+        conn.close()
 
-            year = int(t_data.get("year") or 0)
-            if cutoff_year and year and year < cutoff_year:
-                continue
-            if requested_years and year and year not in requested_years:
-                continue
+    if not rows:
+        # Report actual coverage from DuckDB so the agent doesn't speculate.
+        conn2 = duckdb.connect(str(DUCKDB_PATH), read_only=True)
+        try:
+            cov_sql = "SELECT company, year FROM transcripts WHERE content IS NOT NULL"
+            cov_params: list = []
+            if requested_ticker:
+                cov_sql += " AND ticker = ?"
+                cov_params.append(requested_ticker)
+            cov_rows = conn2.execute(cov_sql, cov_params).fetchall()
+        finally:
+            conn2.close()
 
-            # Find paragraphs containing the query terms
-            paragraphs = content.split("\n\n")
-            matches = []
-            for para in paragraphs:
-                if any(term in para.lower() for term in content_terms):
-                    matches.append(para.strip()[:500])
-
-            # Metadata fallback: if user asked for a specific period, return opening
-            # excerpts even when keyword-in-body matching is sparse.
-            if not matches and requested_years:
-                for para in paragraphs:
-                    clean = para.strip()
-                    if clean:
-                        matches.append(clean[:500])
-                    if len(matches) >= 2:
-                        break
-
-            if matches:
-                quarter = t_data.get("quarter", "?")
-                source = _format_transcript_source(company, quarter, year, t_data.get("date"))
-                excerpt_blocks = []
-                for match in matches[:3]:
-                    excerpt_blocks.append(f"Source: {source}\nQuote: {match}")
-                header = f"## {company} (Q{quarter} {year} Earnings Call)"
-                results.append(header + "\n" + "\n---\n".join(excerpt_blocks))
-                if len(results) >= max_results:
-                    return "\n\n".join(results)
-
-    if not results:
-        # Build a helpful coverage note so the agent can give an informed answer.
-        coverage = {}
-        for ticker, transcript_list in transcripts.items():
-            if requested_ticker and ticker != requested_ticker:
-                continue
-            years_available = sorted({int(t["year"]) for t in transcript_list if t.get("year")})
-            if years_available:
-                coverage[COMPANY_NAMES.get(ticker, ticker)] = years_available
-
-        if coverage:
-            lines = [f"No mentions of '{query}' found in available earnings call transcripts."]
+        if cov_rows:
+            from collections import defaultdict
+            coverage: dict[str, list[int]] = defaultdict(list)
+            for cov_company, cov_year in cov_rows:
+                if cov_year:
+                    coverage[cov_company].append(int(cov_year))
+            lines = [f"No transcript records found matching the requested period for '{query}'."]
             lines.append("Available transcript years by company:")
-            for company, years in coverage.items():
-                lines.append(f"  {company}: {min(years)}–{max(years)} ({len(years)} transcripts)")
+            for cov_name, cov_years in sorted(coverage.items()):
+                cov_years_sorted = sorted(set(cov_years))
+                lines.append(f"  {cov_name}: {min(cov_years_sorted)}–{max(cov_years_sorted)} ({len(cov_years_sorted)} transcripts)")
+            lines.append("Use one of the listed years/quarters for a deterministic summary request.")
             return "\n".join(lines)
 
-        return f"No earnings call transcripts are available. No mentions of '{query}' found."
+        fallback = _transcript_summary_coverage_note(requested_ticker=requested_ticker)
+        if fallback:
+            lines = [f"No transcript records matched '{query}'."]
+            lines.append("Coverage from transcript summaries:")
+            for cov_name, cov_years in fallback.items():
+                lines.append(f"  {cov_name}: {min(cov_years)}–{max(cov_years)} ({len(cov_years)} transcripts)")
+            return "\n".join(lines)
+        return f"No earnings call transcripts are available. No excerpts matched '{query}'."
+
+    results = []
+    for ticker, company_name, year, quarter, date_val, content in rows:
+        paragraphs = content.split("\n\n")
+        matches = []
+        for para in paragraphs:
+            if any(term in para.lower() for term in content_terms):
+                matches.append(para.strip()[:500])
+
+        # Fallback: return opening excerpts when specific period was requested.
+        if not matches and requested_years:
+            for para in paragraphs:
+                clean = para.strip()
+                if clean:
+                    matches.append(clean[:500])
+                if len(matches) >= 2:
+                    break
+
+        if matches:
+            source = _format_transcript_source(company_name, quarter, year, date_val)
+            excerpt_blocks = [f"Source: {source}\nQuote: {m}" for m in matches[:3]]
+            header = f"## {company_name} (Q{quarter} {year} Earnings Call)"
+            results.append(header + "\n" + "\n---\n".join(excerpt_blocks))
+            if len(results) >= max_results:
+                break
+
+    if not results:
+        return f"No transcript excerpts matched the keywords in '{query}'."
     return "\n\n".join(results)
 
 
