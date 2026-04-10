@@ -477,6 +477,7 @@ button[data-baseweb="tab"][aria-selected="true"] {
     position: absolute;
     inset: 0;
     background: linear-gradient(120deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 55%, rgba(0,0,0,0.18) 100%);
+    z-index: 0;
 }
 
 .hero-content {
@@ -574,7 +575,13 @@ HERO_IMG_PATH = Path(__file__).resolve().parent / "static" / "bull.jpg"
 def get_hero_bg_css() -> str:
     if HERO_IMG_PATH.exists():
         b64 = base64.b64encode(HERO_IMG_PATH.read_bytes()).decode()
-        return f"<style>.hero-banner {{ background-image: url('data:image/jpeg;base64,{b64}'); }}</style>"
+        return (
+            "<style>"
+            ".hero-banner {"
+            f"background-image: linear-gradient(120deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 55%, rgba(0,0,0,0.18) 100%), url('data:image/jpeg;base64,{b64}');"
+            "}"
+            "</style>"
+        )
     return ""
 
 
@@ -1735,7 +1742,7 @@ def _render_chatbot_impl() -> None:
         if st.session_state.show_starter_prompts and not st.session_state.chat_busy and pending_question is None:
             suggestions = [
                 "What explains Michelin's revenue growth versus Goodyear and Bridgestone?",
-                "Which peer is most comparable to Michelin on profitability?",
+                "Why does Michelin have higher margins than its peers?",
                 "Why has Sumitomo's stock price grown so rapidly?",
                 "Summarize Michelin's 2025 earnings transcript",
                 "Summarize the AI-related patents Michelin has filed",
