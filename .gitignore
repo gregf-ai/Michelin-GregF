@@ -6,7 +6,10 @@ venv/
 *.egg-info/
 dist/
 build/
-data/raw/uspto_odp/
+data/raw/uspto_odp/**
+!data/raw/uspto_odp/
+!data/raw/uspto_odp/*/
+!data/raw/uspto_odp/*/filings_raw.jsonl
 data/archive/
 data/processed/*.log
 data/processed/*.err.log

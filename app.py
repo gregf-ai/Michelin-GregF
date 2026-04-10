@@ -720,21 +720,78 @@ def rank_emoji(rank: int | None) -> str:
     return "❌"
 
 
-def render_overview_rankings(metric_specs: list[tuple[str, str, pd.DataFrame, str]]) -> None:
-    items: list[dict[str, object]] = []
-    for label, description, df, metric in metric_specs:
+def render_overview_rankings(
+    ratios_data: pd.DataFrame,
+    margin_data: pd.DataFrame,
+    income: pd.DataFrame,
+    stock_growth_data: pd.DataFrame,
+    dividend_growth_data: pd.DataFrame,
+    patent_yearly: pd.DataFrame,
+    ai_patent_yearly: pd.DataFrame,
+) -> None:
+    def _item(label: str, description: str, df: pd.DataFrame, metric: str) -> dict[str, object]:
         ranked = median_metric_frame(df, metric).reset_index(drop=True)
         rows = ranked.index[ranked["company"] == "Michelin"]
         rank = int(rows[0]) + 1 if len(rows) else None
         leader = str(ranked.iloc[0]["company"]) if not ranked.empty else None
-        items.append({
+        return {
             "label": label,
             "description": description,
             "rank": rank,
             "leader": leader,
-        })
+        }
 
-    items.sort(key=lambda x: x["rank"] if x["rank"] is not None else 999)
+    # Keep these overview bullets explicitly hard-coded and in a fixed display order.
+    items: list[dict[str, object]] = [
+        _item(
+            "ROIC",
+            "Return on invested capital, capturing how efficiently operating capital is converted into returns.",
+            ratios_data,
+            "return_on_inv_capital",
+        ),
+        _item(
+            "Margin",
+            "EBITDA margin, a read on operating profitability and pricing discipline.",
+            margin_data,
+            "ebitda_margin",
+        ),
+        _item(
+            "Revenue Growth",
+            "Year-over-year top-line growth to gauge demand momentum and market capture.",
+            income,
+            "revenue_growth",
+        ),
+        _item(
+            "EBITDA Growth",
+            "Year-over-year EBITDA growth as a signal of earnings power expansion.",
+            income,
+            "ebitda_growth",
+        ),
+        _item(
+            "Annual Stock Growth",
+            "Year-over-year change in split-adjusted year-end stock price as a market verdict.",
+            stock_growth_data,
+            "annual_stock_growth",
+        ),
+        _item(
+            "Dividend Growth",
+            "Growth in dividends paid, indicating payout durability and cash distribution strength.",
+            dividend_growth_data,
+            "dividend_growth",
+        ),
+        _item(
+            "Patent Applications per Year",
+            "Annual USPTO patent applications, a proxy for innovation pipeline and R&D output.",
+            patent_yearly,
+            "patent_count",
+        ),
+        _item(
+            "AI Patent Applications per Year",
+            "Annual AI-driven patent applications (LLM-classified), indicating AI R&D intensity.",
+            ai_patent_yearly,
+            "ai_patent_count",
+        ),
+    ]
 
     lines: list[str] = []
     for item in items:
@@ -757,7 +814,7 @@ def render_overview_rankings(metric_specs: list[tuple[str, str, pd.DataFrame, st
     st.markdown(
         "<div class='overview-panel'>"
         "<div class='overview-head'>Michelin Competitive Scorecard</div>"
-        "<div class='overview-subhead'>Sorted by Michelin rank among 5 peers (best to worst). Basis: 10-year median.</div>"
+        "<div class='overview-subhead'>Fixed scorecard order. Rank is Michelin's position among 5 peers on 10-year median.</div>"
         "<div class='overview-rank-label'>Rank</div>"
         + "".join(lines)
         + "</div>",
@@ -1826,56 +1883,13 @@ with _tab_ctx:
     tabs = st.tabs(["Overview", "EBITDA Margin", "ROIC", "Dividend Growth", "Annual Stock Growth", "Revenue Growth", "EBITDA Growth", "Patent Applications/Year", "AI Patent Applications/Year"])
     with tabs[0]:
         render_overview_rankings(
-            [
-                (
-                    "ROIC",
-                    "Return on invested capital, capturing how efficiently operating capital is converted into returns.",
-                    ratios_data,
-                    "return_on_inv_capital",
-                ),
-                (
-                    "Margin",
-                    "EBITDA margin, a read on operating profitability and pricing discipline.",
-                    margin_data,
-                    "ebitda_margin",
-                ),
-                (
-                    "Revenue Growth",
-                    "Year-over-year top-line growth to gauge demand momentum and market capture.",
-                    income,
-                    "revenue_growth",
-                ),
-                (
-                    "EBITDA Growth",
-                    "Year-over-year EBITDA growth as a signal of earnings power expansion.",
-                    income,
-                    "ebitda_growth",
-                ),
-                (
-                    "Annual Stock Growth",
-                    "Year-over-year change in split-adjusted year-end stock price as a market verdict.",
-                    stock_growth_data,
-                    "annual_stock_growth",
-                ),
-                (
-                    "Dividend Growth",
-                    "Growth in dividends paid, indicating payout durability and cash distribution strength.",
-                    dividend_growth_data,
-                    "dividend_growth",
-                ),
-                (
-                    "Patent Applications per Year",
-                    "Annual USPTO patent applications, a proxy for innovation pipeline and R&D output.",
-                    patent_yearly,
-                    "patent_count",
-                ),
-                (
-                    "AI Patent Applications per Year",
-                    "Annual AI-driven patent applications (LLM-classified), indicating AI R&D intensity.",
-                    ai_patent_yearly,
-                    "ai_patent_count",
-                ),
-            ]
+            ratios_data,
+            margin_data,
+            income,
+            stock_growth_data,
+            dividend_growth_data,
+            patent_yearly,
+            ai_patent_yearly,
         )
     with tabs[1]:
         render_metric_tab(
