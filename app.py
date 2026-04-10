@@ -47,10 +47,10 @@ ARTICLE_CSS = """
     box-shadow: none !important;
 }
 
-/* Keep chat panel permanently visible: hide collapse/expand controls. */
+/* Keep Streamlit's native sidebar controls available (collapse + reopen). */
 [data-testid="stSidebarCollapseButton"],
 [data-testid="stSidebarCollapsedControl"] {
-    display: none !important;
+    display: flex !important;
 }
 
 [data-testid="block-container"] {
@@ -144,11 +144,11 @@ h1, h2, h3, h4 {
 
 /* ── Chat panel: dark card container ── */
 .chat-panel [data-testid="stVerticalBlockBorderWrapper"] {
-    background: linear-gradient(180deg, #171717 0%, #101010 100%);
-    border: 1px solid #303030;
+    background: linear-gradient(180deg, #161616 0%, #121212 100%);
+    border: 1px solid #2f2f2f;
     border-radius: 18px;
     box-shadow: 0 20px 44px rgba(0,0,0,0.22);
-    padding: 1rem 1rem 0.75rem;
+    padding: 0.95rem 0.95rem 0.8rem;
 }
 
 /* Inner scroll area (the st.container with height) */
@@ -170,18 +170,22 @@ h1, h2, h3, h4 {
 .chat-panel [data-testid="stChatMessage"] p,
 .chat-panel [data-testid="stChatMessage"] li,
 .chat-panel [data-testid="stChatMessage"] div {
-    font-size: 0.9rem !important;
-    line-height: 1.4 !important;
+    font-size: 0.82rem !important;
+    line-height: 1.38 !important;
 }
 
 .chat-panel .stCaption,
 .chat-panel [data-testid="stCaptionContainer"] {
-    font-size: 0.82rem !important;
+    font-size: 0.76rem !important;
     line-height: 1.35 !important;
 }
 
 .chat-panel [data-testid="stChatMessage"] {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 0.35rem 0.45rem;
+    margin-bottom: 0.3rem;
 }
 
 /* Compact chat avatars/icons */
@@ -204,7 +208,7 @@ h1, h2, h3, h4 {
     color: #f4f4f4 !important;
     background: #191919 !important;
     border: 1px solid #3a3a3a !important;
-    font-size: 0.88rem !important;
+    font-size: 0.8rem !important;
 }
 
 .chat-panel [data-testid="stChatInput"] textarea::placeholder,
@@ -215,11 +219,47 @@ h1, h2, h3, h4 {
 /* Starter prompt button contrast */
 .chat-panel [data-testid="stButton"] button,
 .chat-panel [data-testid="stButton"] button[kind="secondary"] {
-    background: #2f2f2f !important;
-    border: 1px solid #4a4a4a !important;
+    background: #2a2a2a !important;
+    border: 1px solid #474747 !important;
     color: #f0f0f0 !important;
     -webkit-text-fill-color: #f0f0f0 !important;
     opacity: 1 !important;
+}
+
+section[data-testid="stSidebar"] [class*="st-key-clear_chat_button"] button,
+section[data-testid="stSidebar"] [class*="st-key-toggle_prompts_button"] button {
+    background-color: #242424 !important;
+    background-image: none !important;
+    border: 1px solid #5a5a5a !important;
+    color: #f0f0f0 !important;
+    -webkit-text-fill-color: #f0f0f0 !important;
+    opacity: 1 !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    line-height: 1.28 !important;
+}
+
+section[data-testid="stSidebar"] [class*="st-key-clear_chat_button"] button *,
+section[data-testid="stSidebar"] [class*="st-key-toggle_prompts_button"] button * {
+    color: #f0f0f0 !important;
+    -webkit-text-fill-color: #f0f0f0 !important;
+    font-size: 0.82rem !important;
+    line-height: 1.28 !important;
+}
+
+section[data-testid="stSidebar"] [class*="st-key-clear_chat_button"] button:hover,
+section[data-testid="stSidebar"] [class*="st-key-toggle_prompts_button"] button:hover {
+    background-color: #323232 !important;
+    background-image: none !important;
+    border-color: #8a8a8a !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+section[data-testid="stSidebar"] [class*="st-key-clear_chat_button"] button:hover *,
+section[data-testid="stSidebar"] [class*="st-key-toggle_prompts_button"] button:hover * {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
 }
 
 .chat-panel [data-testid="stButton"] button *,
@@ -246,21 +286,21 @@ h1, h2, h3, h4 {
 
 /* Force styling specifically for starter prompt buttons in sidebar */
 section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button {
-    background-color: #2f2f2f !important;
+    background-color: #2a2a2a !important;
     background-image: none !important;
-    border: 1px solid #4a4a4a !important;
+    border: 1px solid #474747 !important;
     color: #f0f0f0 !important;
     -webkit-text-fill-color: #f0f0f0 !important;
     opacity: 1 !important;
-    font-size: 0.8rem !important;
-    line-height: 1.22 !important;
+    font-size: 0.82rem !important;
+    line-height: 1.28 !important;
 }
 
 section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button * {
     color: #f0f0f0 !important;
     -webkit-text-fill-color: #f0f0f0 !important;
-    font-size: 0.8rem !important;
-    line-height: 1.22 !important;
+    font-size: 0.82rem !important;
+    line-height: 1.28 !important;
 }
 
 section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] button:hover {
@@ -321,6 +361,13 @@ section[data-testid="stSidebar"] [class*="st-key-single_page_suggestion_"] butto
 .overview-subhead {
     color: #4a4a4a;
     margin-bottom: 0.85rem;
+}
+
+.overview-rank-label {
+    color: #2b2b2b;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: -0.35rem 0 0.35rem;
 }
 
 .overview-line {
@@ -473,19 +520,15 @@ button[data-baseweb="tab"][aria-selected="true"] {
 }
 
 /* ── Streamlit default sidebar (dark themed) ── */
-/* Streamlit renders sidebar as the first pane; reverse row order so it appears on the right. */
+/* Keep default row order so sidebar stays on the left. */
 [data-testid="stAppViewContainer"] {
-    flex-direction: row-reverse;
+    flex-direction: row;
 }
 
 section[data-testid="stSidebar"] {
     background: #0f0f0f !important;
-    left: auto !important;
-    right: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    min-width: 440px !important;
-    width: 440px !important;
 }
 
 section[data-testid="stSidebar"] > div {
@@ -521,6 +564,7 @@ section[data-testid="stSidebar"] [data-testid="stChatMessage"] {
 """
 
 GRAYSCALE = ["#111111", "#555555", "#8c8c8c", "#b4b4b4", "#d0d0d0", "#e5e5e5"]
+PATENT_LINE_COLORS = ["#111111", "#3f5f4a", "#8a4f4f", "#3d4f78", "#7a623e", "#4e4e4e"]
 PEER_ORDER = [COMPANY_NAMES[t] for t in COMPANY_NAMES]
 CURATED_DIR = Path(__file__).resolve().parent / "data" / "processed" / "curated"
 ENV_FILE_PATH = Path(__file__).resolve().parent / ".env"
@@ -714,6 +758,7 @@ def render_overview_rankings(metric_specs: list[tuple[str, str, pd.DataFrame, st
         "<div class='overview-panel'>"
         "<div class='overview-head'>Michelin Competitive Scorecard</div>"
         "<div class='overview-subhead'>Sorted by Michelin rank among 5 peers (best to worst). Basis: 10-year median.</div>"
+        "<div class='overview-rank-label'>Rank</div>"
         + "".join(lines)
         + "</div>",
         unsafe_allow_html=True,
@@ -1042,12 +1087,13 @@ def build_patent_trend(df: pd.DataFrame, metric: str, companies: list[str]) -> g
         cdf = df[df["company"] == company].dropna(subset=[metric]).sort_values("fiscal_year")
         if cdf.empty:
             continue
+        color = PATENT_LINE_COLORS[idx % len(PATENT_LINE_COLORS)]
         fig.add_trace(go.Scatter(
             x=cdf["fiscal_year"], y=cdf[metric],
             mode="lines+markers",
             name=company,
-            line=dict(color=GRAYSCALE[idx], width=2.5),
-            marker=dict(size=6, color=GRAYSCALE[idx]),
+            line=dict(color=color, width=3),
+            marker=dict(size=8, color=color, line=dict(color="#ffffff", width=1.2)),
             hovertemplate=f"{company}<br>%{{x}}: %{{y:,.0f}}<extra></extra>",
         ))
     fig.update_layout(
@@ -1595,6 +1641,8 @@ def _render_chatbot_impl() -> None:
 
     if "chat_busy" not in st.session_state:
         st.session_state.chat_busy = False
+    if "show_starter_prompts" not in st.session_state:
+        st.session_state.show_starter_prompts = True
 
     # Outer wrapper styled via .chat-panel CSS selector
     wrapper = st.container()
@@ -1611,27 +1659,42 @@ def _render_chatbot_impl() -> None:
         history = _iter_chat_history()
         pending_question = st.session_state.pop("pending_question", None) if "pending_question" in st.session_state else None
 
-        if not history and not st.session_state.chat_busy and pending_question is None:
+        controls_col1, controls_col2, _controls_spacer = st.columns([1, 1, 2], gap="small")
+        with controls_col1:
+            prompts_label = "Hide prompts" if st.session_state.show_starter_prompts else "Starter prompts"
+            if st.button(prompts_label, key="toggle_prompts_button", width="stretch"):
+                st.session_state.show_starter_prompts = not st.session_state.show_starter_prompts
+                st.rerun()
+        with controls_col2:
+            if st.button("Clear chat", key="clear_chat_button", width="stretch"):
+                st.session_state.chat_history = []
+                st.session_state.chat_busy = False
+                st.session_state.show_starter_prompts = True
+                st.session_state.pop("pending_question", None)
+                st.rerun()
+
+        if st.session_state.show_starter_prompts and not st.session_state.chat_busy and pending_question is None:
             suggestions = [
-                "Does Michelin structurally outperform peers on margins?",
                 "What explains Michelin's revenue growth versus Goodyear and Bridgestone?",
                 "Which peer is most comparable to Michelin on profitability?",
                 "Why has Sumitomo's stock price grown so rapidly?",
-                "Why does Michelin maintain margins higher than their competitors?",
+                "Summarize Michelin's 2025 earnings transcript",
+                "Summarize the AI-related patents Michelin has filed",
             ]
             st.caption("Starter prompts")
-            prompt_cols = st.columns(2, gap="small")
+            prompt_cols = st.columns(1, gap="small")
             for idx, suggestion in enumerate(suggestions):
-                with prompt_cols[idx % 2]:
+                with prompt_cols[0]:
                     if st.button(suggestion, key=f"single_page_suggestion_{idx}", width="stretch"):
                         st.session_state.pending_question = suggestion
+                        st.session_state.show_starter_prompts = False
                         st.rerun()
 
         # Keep the input near the top of the panel so no scrolling is needed to ask the first question.
-        user_input = pending_question or st.chat_input("Ask about Michelin versus peers")
+        user_input = pending_question or st.chat_input("Ask a question about Michelin and peers")
 
         has_history = bool(history)
-        chat_box = st.container(height=560 if (has_history or st.session_state.chat_busy) else 260, border=True)
+        chat_box = st.container(height=560 if (has_history or st.session_state.chat_busy) else 220, border=True)
         with chat_box:
             for role, text, meta in history:
                 with st.chat_message(role):
@@ -1728,27 +1791,29 @@ st.markdown(
 
 st.markdown("<h2 class='section-title'>Does Michelin have a strong competitive moat?</h2>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='section-deck' style='max-width:none;width:100%;box-sizing:border-box;background:#f8f8f8;border:1px solid #ececec;padding:1.1rem 1.2rem;border-radius:8px;white-space:nowrap;overflow-x:auto;overflow-y:hidden;'>"
+    "<div class='section-deck' style='max-width:none;width:100%;box-sizing:border-box;background:#f8f8f8;border:1px solid #ececec;padding:1.1rem 1.2rem;border-radius:8px;white-space:normal;overflow-x:hidden;overflow-y:hidden;'>"
     "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin-bottom:0.5rem;'><strong>Thesis</strong></div>"
     "<div style='margin-bottom:0.6rem;'>Companies with strong competitive moats and disciplined management tend to show the following traits:</div>"
-    "<ol style='margin:0.1rem 0 1rem 1.35rem;padding:0;line-height:1.45;white-space:nowrap;'>"
+    "<ol style='margin:0.1rem 0 1rem 1.35rem;padding:0;line-height:1.45;white-space:normal;'>"
     "<li>Higher margins than peers.</li>"
     "<li>Exceptional return on invested capital (ROIC).</li>"
     "<li>Increasing shareholder returns through stock price appreciation and dividend growth.</li>"
     "<li>Sustained revenue and profit growth driven by operational excellence and innovation.</li>"
+    "<li>Prolific patent and innovation funnels — highly competitive companies continuously invest in IP. In recent years, AI patents have become an increasingly important signal of a company's ability to adapt to and capitalise on changing technology.</li>"
     "</ol>"
     "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin:0.25rem 0 0.5rem;'><strong>Methodology</strong></div>"
-    "<ul style='margin:0.1rem 0 1rem 0.25rem;padding:0;line-height:1.45;white-space:nowrap;list-style:none;'>"
+    "<ul style='margin:0.1rem 0 1rem 0.25rem;padding:0;line-height:1.45;white-space:normal;list-style:none;'>"
     "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Companies:</strong> Michelin, Bridgestone, Goodyear, Continental, Pirelli, Sumitomo.</li>"
     "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Sources:</strong> Curated income statement, cash flow, ratio, and stock price datasets; supporting transcripts, filings, and news for context.</li>"
     "<li><span style='color:#666;margin-right:0.5rem;'>•</span><strong>Timelines:</strong> Financial comparisons use 10-year history plus 2025 snapshots; stock views include yearly OHLC from daily adjusted-close data.</li>"
     "</ul>"
     "<div style='font-family:Libre Baskerville, serif;font-size:1.22rem;margin:0.25rem 0 0.5rem;'><strong>Conclusion</strong></div>"
-    "<ul style='margin:0.1rem 0 0 0.25rem;padding:0;line-height:1.45;white-space:nowrap;list-style:none;'>"
-    "<li><span style='color:#6e9f76;font-weight:700;margin-right:0.5rem;'>✓</span>Michelin consistently posts the highest margins among peers, suggesting a differentiated competitive edge.</li>"
-    "<li><span style='color:#6e9f76;font-weight:700;margin-right:0.5rem;'>✓</span>Michelin appears to demonstrate strong capital discipline, with the second-most efficient capital deployment among peers.</li>"
-    "<li><span style='color:#6e9f76;font-weight:700;margin-right:0.5rem;'>✓</span>Michelin has delivered steady long-run dividend growth, though some competitors, including Sumitomo and Pirelli, have shown stronger stock price growth.</li>"
-    "<li><span style='color:#b06565;font-weight:700;margin-right:0.5rem;'>✗</span>Michelin appears to lag in revenue growth, which weighs on profit growth and may indicate challenges in capturing share through innovation or M&amp;A.</li>"
+    "<ul style='margin:0.1rem 0 0 0.25rem;padding:0;line-height:1.45;white-space:normal;list-style:none;text-align:left;'>"
+    "<li style='display:flex;align-items:flex-start;gap:0.55rem;white-space:normal;'><span style='color:#6e9f76;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:1.15rem;line-height:1;font-size:1.02rem;margin-top:0.08rem;'>✓</span><span>Michelin consistently posts the highest margins among peers, suggesting a differentiated competitive edge.</span></li>"
+    "<li style='display:flex;align-items:flex-start;gap:0.55rem;white-space:normal;'><span style='color:#6e9f76;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:1.15rem;line-height:1;font-size:1.02rem;margin-top:0.08rem;'>✓</span><span>Michelin appears to demonstrate strong capital discipline, with the second-most efficient capital deployment among peers.</span></li>"
+    "<li style='display:flex;align-items:flex-start;gap:0.55rem;white-space:normal;'><span style='color:#6e9f76;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:1.15rem;line-height:1;font-size:1.02rem;margin-top:0.08rem;'>✓</span><span>Michelin has delivered steady long-run dividend growth, though some competitors, including Sumitomo and Pirelli, have shown stronger stock price growth.</span></li>"
+    "<li style='display:flex;align-items:flex-start;gap:0.55rem;white-space:normal;'><span style='color:#b06565;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:1.15rem;line-height:1;font-size:1.02rem;margin-top:0.08rem;'>✗</span><span>Michelin appears to lag in revenue growth, which weighs on profit growth and may indicate challenges in capturing share through innovation or M&amp;A.</span></li>"
+    "<li style='display:flex;align-items:flex-start;gap:0.55rem;white-space:normal;'><span style='color:#b06565;font-weight:700;display:inline-flex;align-items:center;justify-content:center;min-width:1.15rem;line-height:1;font-size:1.02rem;margin-top:0.08rem;'>✗</span><span>Michelin lags competitors in patent application filings per year and appears to be behind peers in AI-related patent activity, suggesting a potential gap in innovation pipeline intensity.</span></li>"
     "</ul>"
     "</div>",
     unsafe_allow_html=True,
@@ -1798,6 +1863,18 @@ with _tab_ctx:
                     dividend_growth_data,
                     "dividend_growth",
                 ),
+                (
+                    "Patents per Year",
+                    "Annual USPTO patent applications, a proxy for innovation pipeline and R&D output.",
+                    patent_yearly,
+                    "patent_count",
+                ),
+                (
+                    "AI Patents per Year",
+                    "Annual AI-driven patent applications (LLM-classified), indicating AI R&D intensity.",
+                    ai_patent_yearly,
+                    "ai_patent_count",
+                ),
             ]
         )
     with tabs[1]:
@@ -1846,7 +1923,7 @@ with _tab_ctx:
         render_patent_tab(
             patent_yearly,
             "patent_count",
-            "Patent Applications",
+            "Patents per Year",
             "Annual USPTO patent applications per company, ranked by 10-year median.",
             "patents",
         )
@@ -1854,7 +1931,7 @@ with _tab_ctx:
         render_patent_tab(
             ai_patent_yearly,
             "ai_patent_count",
-            "AI Patents",
+            "AI Patents per Year",
             "Annual AI-driven patent applications (LLM-classified), ranked by 10-year median.",
             "ai_patents",
         )
